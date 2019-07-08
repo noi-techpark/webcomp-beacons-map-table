@@ -1,0 +1,8 @@
+{
+  "name": "beacons-api",
+  "version": "0.0.1",
+  "description": "Collection of wrappers for all the various API services.",
+  "author": "danielrampanelli <hello@danielrampanelli.com>",
+  "private": true,
+  "main": "./src/index.js"
+}
