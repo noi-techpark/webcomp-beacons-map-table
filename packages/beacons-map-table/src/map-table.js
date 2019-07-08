@@ -171,7 +171,7 @@ class BeaconsMapTableComponent extends LitElement {
         createField('beacon-minor', 'MINOR')
         createField('beacon-position', 'POSITION')
 
-        if (!!self.tourismPoisSupportedSupported) {
+        if (!!self.tourismPoisSupported) {
           root.appendChild(window.document.createElement('hr'))
 
           createTitle('NEAREST POI')
@@ -188,7 +188,7 @@ class BeaconsMapTableComponent extends LitElement {
       document.getElementById('beacon-minor').textContent = dialog.beacon.minor
       document.getElementById('beacon-position').textContent = dialog.beacon.latitude + ', ' + dialog.beacon.longitude
 
-      if (!!self.tourismPoisSupportedSupported) {
+      if (!!self.tourismPoisSupported) {
         document.getElementById('poi-id').textContent = dialog.poi.Id
         document.getElementById('poi-name').textContent = dialog.poi.Shortname
 
@@ -232,7 +232,7 @@ class BeaconsMapTableComponent extends LitElement {
       self.map.ondetails = async (beacon) => {
         dialog.beacon = beacon
 
-        if (!!self.tourismPoisSupportedSupported) {
+        if (!!self.tourismPoisSupported) {
           loader.style.display = 'block'
 
           dialog.poi = await getNearestTourismPOI(beacon.latitude, beacon.longitude)
