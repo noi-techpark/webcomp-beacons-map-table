@@ -1,0 +1,11 @@
+{
+  "name": "beacons-map",
+  "version": "0.0.1",
+  "description": "Map component used to display a list of beacons.",
+  "author": "danielrampanelli <hello@danielrampanelli.com>",
+  "private": true,
+  "main": "./src/map.js",
+  "dependencies": {
+    "lit-element": "^2.2.0"
+  }
+}

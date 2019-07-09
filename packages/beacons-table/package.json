@@ -1,0 +1,12 @@
+{
+  "name": "beacons-table",
+  "version": "0.0.1",
+  "description": "Table component used to display a list of beacons.",
+  "author": "danielrampanelli <hello@danielrampanelli.com>",
+  "private": true,
+  "main": "./src/table.js",
+  "dependencies": {
+    "@vaadin/vaadin-grid": "^5.4.4",
+    "lit-element": "^2.2.0"
+  }
+}
