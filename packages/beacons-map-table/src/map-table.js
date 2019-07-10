@@ -1,7 +1,8 @@
 import { LitElement, html } from 'lit-element'
 import '@polymer/iron-pages/iron-pages.js'
 import '@polymer/paper-spinner/paper-spinner.js'
-import '@vaadin/vaadin-button/vaadin-button.js'
+import '@polymer/paper-tabs/paper-tab.js'
+import '@polymer/paper-tabs/paper-tabs.js'
 import '@vaadin/vaadin-dialog/vaadin-dialog.js'
 import { getBeacons, getNearestTourismPOI } from 'beacons-api'
 import 'beacons-map'
@@ -63,8 +64,11 @@ class BeaconsMapTableComponent extends LitElement {
           width: 240px;
         }
 
-        #buttons {
+        #tabs {
+          --paper-tabs-selection-bar-color: #29A8E0;
+          --paper-tab-ink: #29A8E0;
           float: right;
+          margin: 2px 0 0 0;
         }
 
         #pages {
@@ -86,10 +90,10 @@ class BeaconsMapTableComponent extends LitElement {
         }
         ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
           html`
-          <div id="buttons">
-            <vaadin-button id="view-map" theme="primary">MAP</vaadin-button>
-            <vaadin-button id="view-table" theme="">TABLE</vaadin-button>
-          </div>
+          <paper-tabs id="tabs" selected="0">
+            <paper-tab>MAP</paper-tab>
+            <paper-tab>TABLE</paper-tab>
+          </paper-tabs>
           `:
           html``
         }
@@ -135,8 +139,7 @@ class BeaconsMapTableComponent extends LitElement {
     const loader = root.getElementById('loader')
     const header = root.getElementById('header')
     const search = root.getElementById('search')
-    const mapButton = root.getElementById('view-map')
-    const tableButton = root.getElementById('view-table')
+    const tabs = root.getElementById('tabs')
     const pages = root.getElementById('pages')
     const dialog = root.getElementById('dialog')
 
@@ -210,21 +213,11 @@ class BeaconsMapTableComponent extends LitElement {
       }
     }
 
-    if (!!mapButton) {
-      mapButton.addEventListener('click', () => {
-          pages.selected = 0
-          mapButton.setAttribute('theme', 'primary')
-          tableButton.setAttribute('theme', '')
-      })
-    }
-
-    if (!!tableButton) {
-      tableButton.addEventListener('click', () => {
-          pages.selected = 1
-          mapButton.setAttribute('theme', '')
-          tableButton.setAttribute('theme', 'primary')
-      })
-    }
+    tabs.addEventListener('iron-select', function(e) {
+      if (pages.selected !== tabs.selected) {
+        pages.selected = tabs.selected
+      }
+    })
 
     self.map = root.getElementById('map')
 

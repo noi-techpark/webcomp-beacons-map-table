@@ -7,7 +7,7 @@
   "dependencies": {
     "@polymer/iron-pages": "^3.0.1",
     "@polymer/paper-spinner": "^3.0.2",
-    "@vaadin/vaadin-button": "^2.2.0",
+    "@polymer/paper-tabs": "^3.1.0",
     "@vaadin/vaadin-dialog": "^2.2.1",
     "beacons-api": "0.0.1",
     "beacons-map": "0.0.1",
