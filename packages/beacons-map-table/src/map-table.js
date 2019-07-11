@@ -30,11 +30,33 @@ class BeaconsMapTableComponent extends LitElement {
     return html`
       <style>
         :host {
-          display: flex;
-          flex-flow: column;
-          height: 480px;
+          display: block;
           min-height: 480px;
           position: relative;
+          width: 100%;
+        }
+
+        :host([size="wide"]) {
+          padding-top: 56.25%;
+        }
+
+        :host([size="classic"]) {
+          padding-top: 75%;
+        }
+
+        :host([size="full"]) {
+          padding-top: 100%;
+        }
+
+        #root {
+          bottom: 0;
+          display: flex;
+          flex-flow: column;
+          height: 100%;
+          left: 0;
+          position: absolute;
+          right: 0;
+          top: 0;
           width: 100%;
         }
 
@@ -80,42 +102,44 @@ class BeaconsMapTableComponent extends LitElement {
       <div id="loader">
         <paper-spinner-lite id="spinner" active="true"></paper-spinner-lite>
       </div>
-      <header id="header">
-        ${!!this.searchSupported?
-          html`<beacons-search id="search"></beacons-search>`:
-          html``
-        }
-        ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
-          html`
-          <paper-tabs id="tabs" selected="0">
-            <paper-tab>MAP</paper-tab>
-            <paper-tab>TABLE</paper-tab>
-          </paper-tabs>
-          `:
-          html``
-        }
-      </header>
-      <iron-pages selected="0" id="pages">
-        ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
-          html`
-          <beacons-map id="map"></beacons-map>
-          <beacons-table id="table"></beacons-table>
-          `:
-          html``
-        }
-        ${!!this.view && this.view === 'map'?
-          html`
-          <beacons-map id="map"></beacons-map>
-          `:
-          html``
-        }
-        ${!!this.view && this.view === 'table'?
-          html`
-          <beacons-table id="table"></beacons-table>
-          `:
-          html``
-        }
-      </iron-pages>
+      <div id="root">
+        <header id="header">
+          ${!!this.searchSupported?
+            html`<beacons-search id="search"></beacons-search>`:
+            html``
+          }
+          ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
+            html`
+            <paper-tabs id="tabs" selected="0">
+              <paper-tab>MAP</paper-tab>
+              <paper-tab>TABLE</paper-tab>
+            </paper-tabs>
+            `:
+            html``
+          }
+        </header>
+        <iron-pages selected="0" id="pages">
+          ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
+            html`
+            <beacons-map id="map"></beacons-map>
+            <beacons-table id="table"></beacons-table>
+            `:
+            html``
+          }
+          ${!!this.view && this.view === 'map'?
+            html`
+            <beacons-map id="map"></beacons-map>
+            `:
+            html``
+          }
+          ${!!this.view && this.view === 'table'?
+            html`
+            <beacons-table id="table"></beacons-table>
+            `:
+            html``
+          }
+        </iron-pages>
+      </div>
       <vaadin-dialog id="dialog" theme="beacon"></vaadin-dialog>
       <dom-module id="beacon-dialog-overlay-styles" theme-for="vaadin-dialog-overlay">
         <template>

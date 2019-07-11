@@ -52,6 +52,16 @@ Once the component is correctly included, the following custom tag can be used
 
 The view attribute can take the following values: `all` (default), `map`, `table` and determines how with which view the beacons are shown.
 
+#### size
+
+This attribute is useful for sizing the height of the component based on a ratio on the width of the component's container. The following values can be specified
+
+* `wide` (16:9 ratio)
+* `classic` (4:3 ratio)
+* `full` (1:1 ratio, as high as wide)
+
+If not specified, you'll be responsible for setting the height of the component as you see fit. To ensure the usability of the component, a minimum height is enforced.
+
 #### search
 
 This boolean attribute determines if the search functionality should be enabled or not (default).
