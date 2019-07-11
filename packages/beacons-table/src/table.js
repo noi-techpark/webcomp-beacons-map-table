@@ -32,7 +32,7 @@ class BeaconsTableView extends LitElement {
     `
   }
 
-  bind (beacons) {
+  bind (beacons, filter) {
     let self = this
 
     self.table.items = beacons

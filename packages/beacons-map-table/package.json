@@ -6,13 +6,18 @@
   "private": true,
   "dependencies": {
     "@polymer/iron-pages": "^3.0.1",
+    "@polymer/paper-dropdown-menu": "^3.0.1",
+    "@polymer/paper-icon-button": "^3.0.2",
+    "@polymer/paper-input": "^3.0.2",
+    "@polymer/paper-listbox": "^3.0.1",
     "@polymer/paper-spinner": "^3.0.2",
     "@polymer/paper-tabs": "^3.1.0",
     "@vaadin/vaadin-dialog": "^2.2.1",
     "beacons-api": "0.0.1",
     "beacons-map": "0.0.1",
     "beacons-table": "0.0.1",
-    "geolib": "^3.0.4"
+    "geolib": "^3.0.4",
+    "paper-autocomplete": "^3.0.0"
   },
   "scripts": {
     "build": "webpack --config webpack.config.js"

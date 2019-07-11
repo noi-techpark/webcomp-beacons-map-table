@@ -55,16 +55,31 @@ class BeaconsMapView extends LitElement {
     `
   }
 
-  bind (beacons) {
+  bind (beacons, filter) {
     let self = this
+
+    for (var id in self.overlays) {
+      self.map.removeLayer(self.overlays[id])
+    }
 
     for (var id in self.markers) {
       self.clusters.removeLayer(self.markers[id])
     }
 
+    self.overlays = []
     self.markers = []
 
     const bounds = L.latLngBounds()
+
+    if (!!filter && !!filter.center && !!filter.radius) {
+      let circle = L.circle(filter.center, {
+        radius: filter.radius,
+        color: '#29A8E0',
+        fill: '#29A8E0'
+      }).addTo(self.map)
+
+      self.overlays.push(circle)
+    }
 
     beacons.forEach((beacon) => {
       let marker = L.marker([ beacon.latitude, beacon.longitude ], {
@@ -79,7 +94,7 @@ class BeaconsMapView extends LitElement {
           self.ondetails(beacon)
         }
       })(beacon))
-      
+
       self.clusters.addLayer(marker)
 
       bounds.extend(marker.getLatLng())
@@ -106,6 +121,7 @@ class BeaconsMapView extends LitElement {
 
     const mapElement = root.getElementById('map')
 
+    self.overlays = []
     self.markers = []
 
     self.clusters = L.markerClusterGroup({

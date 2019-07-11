@@ -57,12 +57,8 @@ class BeaconsMapTableComponent extends LitElement {
           transform: translate(-50%, -50%);
         }
 
-        header {
-          position: relative;
-        }
-
         #search {
-          width: 240px;
+          float: left;
         }
 
         #tabs {
@@ -247,22 +243,27 @@ class BeaconsMapTableComponent extends LitElement {
     self.beacons = await getBeacons()
 
     if (!!self.map) {
-      self.map.bind(self.beacons)
+      self.map.bind(self.beacons, null)
     }
 
     if (!!self.table) {
-      self.table.bind(self.beacons)
+      self.table.bind(self.beacons, null)
     }
 
     if (!!search) {
-      search.beacons = self.beacons
-      search.onsearch = (beacons) => {
+      search.onfilter = (filter) => {
+        let results = self.beacons
+
+        if (!!filter && !!filter.fn) {
+          results = self.beacons.filter(filter.fn)
+        }
+
         if (!!self.map) {
-          self.map.bind(beacons)
+          self.map.bind(results, filter)
         }
 
         if (!!self.table) {
-          self.table.bind(beacons)
+          self.table.bind(results, filter)
         }
       }
     }
