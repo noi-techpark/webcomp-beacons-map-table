@@ -17,6 +17,7 @@
     "beacons-map": "0.0.1",
     "beacons-table": "0.0.1",
     "geolib": "^3.0.4",
+    "lodash": "^4.17.14",
     "paper-autocomplete": "^3.0.0"
   },
   "scripts": {
