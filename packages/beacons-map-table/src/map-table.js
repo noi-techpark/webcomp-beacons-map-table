@@ -1,6 +1,6 @@
 import { LitElement, html } from 'lit-element'
 import '@polymer/iron-pages/iron-pages.js'
-import '@polymer/paper-spinner/paper-spinner.js'
+import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@polymer/paper-tabs/paper-tab.js'
 import '@polymer/paper-tabs/paper-tabs.js'
 import '@vaadin/vaadin-dialog/vaadin-dialog.js'
@@ -50,6 +50,7 @@ class BeaconsMapTableComponent extends LitElement {
         }
 
         #spinner {
+          --paper-spinner-color: #29A8E0;
           left: 50%;
           position: absolute;
           top: 50%;
@@ -81,7 +82,7 @@ class BeaconsMapTableComponent extends LitElement {
         }
       </style>
       <div id="loader">
-        <paper-spinner id="spinner" active="true"></paper-spinner>
+        <paper-spinner-lite id="spinner" active="true"></paper-spinner-lite>
       </div>
       <header id="header">
         ${!!this.searchSupported?
