@@ -141,35 +141,43 @@ class BeaconsSearchWidget extends LitElement {
     let clearButton = root.getElementById('clear')
     let suggestions = root.getElementById('suggestions')
 
+    let mostRecentSearchAttempt = null
+
     self.search.addEventListener('value-changed', async () => {
       if (!!self.search.value && self.search.value.length >= 3) {
+        let timestamp = (new Date()).getTime()
+
+        mostRecentSearchAttempt = timestamp
+
         clearButton.style.visibility = 'visible'
 
         let items = await searchLocations(self.search.value)
 
-        if (!self.search.readonly) {
-          suggestions.suggestions(items.map((item) => {
-            let text = item.display_name
+        if (timestamp === mostRecentSearchAttempt) {
+          if (!self.search.readonly) {
+            suggestions.suggestions(items.map((item) => {
+              let text = item.display_name
 
-            if (!!item.address.village || !!item.address.city) {
-              if (!!item.address.road) {
-                if (!!item.house_number) {
-                  text = item.address.road + ' ' + item.house_number + ', ' + (item.address.village || item.address.city)
+              if (!!item.address.village || !!item.address.city) {
+                if (!!item.address.road) {
+                  if (!!item.house_number) {
+                    text = item.address.road + ' ' + item.house_number + ', ' + (item.address.village || item.address.city)
+                  } else {
+                    text = item.address.road + ', ' + (item.address.village || item.address.city)
+                  }
                 } else {
-                  text = item.address.road + ', ' + (item.address.village || item.address.city)
+                  text = (item.address.village || item.address.city)
                 }
-              } else {
-                text = (item.address.village || item.address.city)
               }
-            }
 
-            return {
-              value: item,
-              text: text
-            }
-          }))
-        } else {
-          suggestions.hideSuggestions()
+              return {
+                value: item,
+                text: text
+              }
+            }))
+          } else {
+            suggestions.hideSuggestions()
+          }
         }
       } else {
         clearButton.style.visibility = 'hidden'
