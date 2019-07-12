@@ -41,6 +41,8 @@ class BeaconsSearchWidget extends LitElement {
         }
 
         #suggestions {
+          --paper-item-min-height: 48px;
+          
           position: absolute;
           width: 280px;
         }
