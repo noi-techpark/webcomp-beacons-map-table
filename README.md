@@ -83,13 +83,15 @@ the address [http://0.0.0.0:8000](http://0.0.0.0:8000).
 ## Usage
 
 You can download the packaged/build components and include them in your website
-or link the resources directly by means of a CDN service.
+or link the resources directly by means of a CDN service. For that, we use
+[jsDelivr](https://www.jsdelivr.com/?docs=gh), which takes our dist-files
+directly from our GitHub repository.
 
     <!-- include self-hosted component -->
     <script src="./js/beacons-map-table.min.js"></script>
 
     <!-- include from CDN -->
-    <script src="https://cdn.jsdelivr.net/gh/noi-techpark/webcomp-beacons-map-table/dist/beacons-map-table.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/noi-techpark/webcomp-beacons-map-table@master/dist/beacons-map-table.min.js"></script>
 
 Once the component is correctly included, the following custom tag can be used
 
