@@ -21,6 +21,7 @@ class BeaconsSearchWidget extends LitElement {
       <style>
         #search {
           --primary-color: #29A8E0;
+
           display: inline-block;
           width: 280px;
         }
@@ -32,6 +33,7 @@ class BeaconsSearchWidget extends LitElement {
         #radius {
           --paper-dropdown-menu-focus-color: #29A8E0;
           --paper-input-container-shared-input-style_-_padding: 4px 0;
+
           display: inline-block;
           margin: 0 0 0 16px;
           visibility: hidden;

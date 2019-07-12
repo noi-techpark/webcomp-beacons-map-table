@@ -48,6 +48,7 @@ class BeaconsMapView extends LitElement {
 
         #map .marker-cluster span {
           color: #ffffff;
+          font-family: 'Helvetica Neue', sans-serif;
           line-height: 30px;
         }
       </style>

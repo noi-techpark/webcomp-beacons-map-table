@@ -1,12 +1,13 @@
 import { LitElement, html } from 'lit-element'
 import '@polymer/iron-pages/iron-pages.js'
-import '@polymer/paper-spinner/paper-spinner-lite.js'
 import '@polymer/paper-tabs/paper-tab.js'
 import '@polymer/paper-tabs/paper-tabs.js'
 import '@vaadin/vaadin-dialog/vaadin-dialog.js'
 import { getBeacons, getNearestTourismPOI } from 'beacons-api'
 import 'beacons-map'
 import 'beacons-table'
+import './error-overlay.js'
+import './loading-overlay.js'
 import './search.js'
 
 class BeaconsMapTableComponent extends LitElement {
@@ -30,6 +31,10 @@ class BeaconsMapTableComponent extends LitElement {
     return html`
       <style>
         :host {
+          --paper-font-common-base_-_font-family: 'Helvetica Neue', sans-serif;
+          --paper-font-subhead_-_font-family: 'Helvetica Neue', sans-serif;
+          --paper-input-container-shared-input-style_-_font-family: 'Helvetica Neue', sans-serif;
+
           display: block;
           min-height: 480px;
           position: relative;
@@ -60,23 +65,13 @@ class BeaconsMapTableComponent extends LitElement {
           width: 100%;
         }
 
-        #loader {
-          background: rgba(255, 255, 255, 0.6);
+        beacons-map-table-loading-overlay, beacons-map-table-error-overlay {
           bottom: 0;
-          display: none;
           left: 0;
           position: absolute;
           right: 0;
           top: 0;
           z-index: 2000;
-        }
-
-        #spinner {
-          --paper-spinner-color: #29A8E0;
-          left: 50%;
-          position: absolute;
-          top: 50%;
-          transform: translate(-50%, -50%);
         }
 
         #search {
@@ -86,6 +81,7 @@ class BeaconsMapTableComponent extends LitElement {
         #tabs {
           --paper-tabs-selection-bar-color: #29A8E0;
           --paper-tab-ink: #29A8E0;
+
           float: right;
           margin: 2px 0 0 0;
         }
@@ -99,9 +95,6 @@ class BeaconsMapTableComponent extends LitElement {
           width: 100%;
         }
       </style>
-      <div id="loader">
-        <paper-spinner-lite id="spinner" active="true"></paper-spinner-lite>
-      </div>
       <div id="root">
         <header id="header">
           ${!!this.searchSupported?
@@ -153,11 +146,51 @@ class BeaconsMapTableComponent extends LitElement {
     `
   }
 
+  async setupData() {
+    let self = this
+    let root = this.shadowRoot
+
+    let loadingOverlay = document.createElement('beacons-map-table-loading-overlay')
+    loadingOverlay.message = 'Loading beacons data...'
+    loadingOverlay.fallback = { timeout: 2500, message: 'Loading beacons data, almost done...' }
+
+    loadingOverlay.show(root)
+
+    try {
+      self.beacons = await getBeacons()
+
+      loadingOverlay.dismiss()
+    } catch (err) {
+      // ignore, since we catch it later
+    }
+
+    if (!self.beacons) {
+      let errorOverlay = document.createElement('beacons-map-table-error-overlay')
+      errorOverlay.message = 'Ooops, an unknown error occurred while loading the required data. If the problem persists, please try again at a later time.'
+      errorOverlay.action = {
+        label: 'Try again',
+        callback: async () => {
+          errorOverlay.dismiss()
+          await self.setupData()
+        }
+      }
+
+      errorOverlay.show(root)
+    } else {
+      if (!!self.map) {
+        self.map.bind(self.beacons, null)
+      }
+
+      if (!!self.table) {
+        self.table.bind(self.beacons, null)
+      }
+    }
+  }
+
   async firstUpdated() {
     let self = this
     let root = this.shadowRoot
 
-    const loader = root.getElementById('loader')
     const header = root.getElementById('header')
     const search = root.getElementById('search')
     const tabs = root.getElementById('tabs')
@@ -168,6 +201,7 @@ class BeaconsMapTableComponent extends LitElement {
       let createTitle = (text) => {
         const titleElement = window.document.createElement('h4')
         titleElement.textContent = text
+        titleElement.style.fontFamily = '"Helvetica Neue", sans-serif'
         titleElement.style.fontSize = '1.5em'
         titleElement.style.fontWeight = 'bold'
         titleElement.style.margin = 0
@@ -178,10 +212,12 @@ class BeaconsMapTableComponent extends LitElement {
       let createField = (id, label) => {
         const labelElement = window.document.createElement('label')
         labelElement.textContent = label
+        labelElement.style.fontFamily = '"Helvetica Neue", sans-serif'
         labelElement.style.fontWeight = 'bold'
 
         const fieldElement = window.document.createElement('div')
         fieldElement.setAttribute('id', id)
+        fieldElement.style.fontFamily = '"Helvetica Neue", sans-serif'
         fieldElement.style.width = '480px'
 
         root.appendChild(labelElement)
@@ -196,7 +232,13 @@ class BeaconsMapTableComponent extends LitElement {
         createField('beacon-position', 'POSITION')
 
         if (!!self.tourismPoisSupported) {
-          root.appendChild(window.document.createElement('hr'))
+          let separator = window.document.createElement('hr')
+          separator.style.backgroundColor = '#cccccc'
+          separator.style.border = '0'
+          separator.style.height = '1px'
+          separator.style.margin = '16px 0'
+
+          root.appendChild(separator)
 
           createTitle('NEAREST POI')
           createField('poi-id', 'ID')
@@ -247,32 +289,41 @@ class BeaconsMapTableComponent extends LitElement {
         dialog.beacon = beacon
 
         if (!!self.tourismPoisSupported) {
-          loader.style.display = 'block'
+          let loadingOverlay = document.createElement('beacons-map-table-loading-overlay')
+          loadingOverlay.message = 'Loading beacon and point-of-interest data...'
+          loadingOverlay.fallback = { timeout: 2000, message: 'Loading beacon and point-of-interest data, almost done...' }
 
-          dialog.poi = await getNearestTourismPOI(beacon.latitude, beacon.longitude)
+          loadingOverlay.show(root)
 
-          loader.style.display = 'none'
+          try {
+            dialog.poi = await getNearestTourismPOI(beacon.latitude, beacon.longitude)
+          } catch (error) {
+            // ignored, handled later
+          }
+
+          loadingOverlay.dismiss()
         }
 
-        dialog.opened = true
+        if (!!self.tourismPoisSupported && !dialog.poi) {
+          let errorOverlay = document.createElement('beacons-map-table-error-overlay')
+          errorOverlay.message = 'Ooops, an unknown error occurred while loading the required data. If the problem persists, please try again at a later time.'
+          errorOverlay.action = {
+            label: 'Close',
+            callback: async () => {
+              errorOverlay.dismiss()
+            }
+          }
+
+          errorOverlay.show(root)
+        } else {
+          dialog.opened = true
+        }
       }
     }
 
     self.table = root.getElementById('table')
 
-    loader.style.display = 'block'
-    header.style.visibility = 'hidden'
-    pages.style.visibility = 'hidden'
-
-    self.beacons = await getBeacons()
-
-    if (!!self.map) {
-      self.map.bind(self.beacons, null)
-    }
-
-    if (!!self.table) {
-      self.table.bind(self.beacons, null)
-    }
+    await self.setupData()
 
     if (!!search) {
       search.onfilter = (filter) => {
@@ -291,10 +342,6 @@ class BeaconsMapTableComponent extends LitElement {
         }
       }
     }
-
-    loader.style.display = 'none'
-    header.style.visibility = 'visible'
-    pages.style.visibility = 'visible'
   }
 
 }
