@@ -127,7 +127,8 @@ class BeaconsMapView extends LitElement {
 
     self.clusters = L.markerClusterGroup({
       disableClusteringAtZoom: 12,
-      maxClusterRadius: 32
+      maxClusterRadius: 32,
+      showCoverageOnHover: false
     })
 
     self.map = L.map(mapElement, {
