@@ -1,11 +1,12 @@
 import { LitElement, html } from 'lit-element'
 import '@polymer/iron-pages/iron-pages.js'
+import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-tabs/paper-tab.js'
 import '@polymer/paper-tabs/paper-tabs.js'
-import '@vaadin/vaadin-dialog/vaadin-dialog.js'
 import { getBeacons, getNearestTourismPOI } from 'beacons-api'
 import 'beacons-map'
 import 'beacons-table'
+import './dialog.js'
 import './error-overlay.js'
 import './loading-overlay.js'
 import './search.js'
@@ -31,9 +32,9 @@ class BeaconsMapTableComponent extends LitElement {
     return html`
       <style>
         :host {
-          --paper-font-common-base_-_font-family: 'Helvetica Neue', sans-serif;
-          --paper-font-subhead_-_font-family: 'Helvetica Neue', sans-serif;
-          --paper-input-container-shared-input-style_-_font-family: 'Helvetica Neue', sans-serif;
+          --paper-font-common-base_-_font-family: "Helvetica Neue", sans-serif;
+          --paper-font-subhead_-_font-family: "Helvetica Neue", sans-serif;
+          --paper-input-container-shared-input-style_-_font-family: "Helvetica Neue", sans-serif;
 
           display: block;
           min-height: 480px;
@@ -133,16 +134,6 @@ class BeaconsMapTableComponent extends LitElement {
           }
         </iron-pages>
       </div>
-      <vaadin-dialog id="dialog" theme="beacon"></vaadin-dialog>
-      <dom-module id="beacon-dialog-overlay-styles" theme-for="vaadin-dialog-overlay">
-        <template>
-          <style>
-            :host([theme~="beacon"]) [part="overlay"] {
-              z-index: 1000;
-            }
-          </style>
-        </template>
-      </dom-module>
     `
   }
 
@@ -187,6 +178,48 @@ class BeaconsMapTableComponent extends LitElement {
     }
   }
 
+  async showDetails(beacon) {
+    let self = this
+    let root = this.shadowRoot
+
+    let tourismPoi = null
+
+    if (!!self.tourismPoisSupported) {
+      let loadingOverlay = document.createElement('beacons-map-table-loading-overlay')
+      loadingOverlay.message = 'Loading beacon and point-of-interest data...'
+      loadingOverlay.fallback = { timeout: 2000, message: 'Loading beacon and point-of-interest data, almost done...' }
+
+      loadingOverlay.show(root)
+
+      try {
+        tourismPoi = await getNearestTourismPOI(beacon.latitude, beacon.longitude)
+      } catch (error) {
+        // ignored, handled later
+      }
+
+      loadingOverlay.dismiss()
+    }
+
+    if (!!self.tourismPoisSupported && !tourismPoi) {
+      let errorOverlay = document.createElement('beacons-map-table-error-overlay')
+      errorOverlay.message = 'Ooops, an unknown error occurred while loading the required data. If the problem persists, please try again at a later time.'
+      errorOverlay.action = {
+        label: 'Close',
+        callback: async () => {
+          errorOverlay.dismiss()
+        }
+      }
+
+      errorOverlay.show(root)
+    } else {
+      let dialog = document.createElement('beacons-map-table-dialog')
+      dialog.beacon = beacon
+      dialog.tourismPoi = tourismPoi
+
+      root.appendChild(dialog)
+    }
+  }
+
   async firstUpdated() {
     let self = this
     let root = this.shadowRoot
@@ -195,86 +228,6 @@ class BeaconsMapTableComponent extends LitElement {
     const search = root.getElementById('search')
     const tabs = root.getElementById('tabs')
     const pages = root.getElementById('pages')
-    const dialog = root.getElementById('dialog')
-
-    dialog.renderer = (root, dialog) => {
-      let createTitle = (text) => {
-        const titleElement = window.document.createElement('h4')
-        titleElement.textContent = text
-        titleElement.style.fontFamily = '"Helvetica Neue", sans-serif'
-        titleElement.style.fontSize = '1.5em'
-        titleElement.style.fontWeight = 'bold'
-        titleElement.style.margin = 0
-
-        root.appendChild(titleElement)
-      }
-
-      let createField = (id, label) => {
-        const labelElement = window.document.createElement('label')
-        labelElement.textContent = label
-        labelElement.style.fontFamily = '"Helvetica Neue", sans-serif'
-        labelElement.style.fontWeight = 'bold'
-
-        const fieldElement = window.document.createElement('div')
-        fieldElement.setAttribute('id', id)
-        fieldElement.style.fontFamily = '"Helvetica Neue", sans-serif'
-        fieldElement.style.width = '480px'
-
-        root.appendChild(labelElement)
-        root.appendChild(fieldElement)
-      }
-
-      if (!root.firstElementChild) {
-        createTitle('BEACON')
-        createField('beacon-uuid', 'UUID')
-        createField('beacon-major', 'MAJOR')
-        createField('beacon-minor', 'MINOR')
-        createField('beacon-position', 'POSITION')
-
-        if (!!self.tourismPoisSupported) {
-          let separator = window.document.createElement('hr')
-          separator.style.backgroundColor = '#cccccc'
-          separator.style.border = '0'
-          separator.style.height = '1px'
-          separator.style.margin = '16px 0'
-
-          root.appendChild(separator)
-
-          createTitle('NEAREST POI')
-          createField('poi-id', 'ID')
-          createField('poi-name', 'NAME')
-          createField('poi-municipality', 'MUNICIPALITY')
-          createField('poi-district', 'DISTRICT')
-          createField('poi-position', 'POSITION')
-        }
-      }
-
-      document.getElementById('beacon-uuid').textContent = dialog.beacon.uuid
-      document.getElementById('beacon-major').textContent = dialog.beacon.major
-      document.getElementById('beacon-minor').textContent = dialog.beacon.minor
-      document.getElementById('beacon-position').textContent = dialog.beacon.latitude + ', ' + dialog.beacon.longitude
-
-      if (!!self.tourismPoisSupported) {
-        document.getElementById('poi-id').textContent = dialog.poi.Id
-        document.getElementById('poi-name').textContent = dialog.poi.Shortname
-
-        if (!!dialog.poi.LocationInfo.MunicipalityInfo) {
-          document.getElementById('poi-municipality').textContent = dialog.poi.LocationInfo.MunicipalityInfo.Name.de
-        } else {
-          document.getElementById('poi-municipality').innerHTML = '&mdash;'
-        }
-
-        if (!!dialog.poi.LocationInfo.DistrictInfo) {
-          document.getElementById('poi-district').textContent = dialog.poi.LocationInfo.DistrictInfo.Name.de
-        } else {
-          document.getElementById('poi-district').innerHTML = '&mdash;'
-        }
-
-        let infos = dialog.poi.GpsInfo.filter(info => info.Gpstype === 'position')
-
-        document.getElementById('poi-position').textContent = infos[0].Latitude + ', ' + infos[0].Longitude
-      }
-    }
 
     tabs.addEventListener('iron-select', function(e) {
       if (pages.selected !== tabs.selected) {
@@ -286,42 +239,17 @@ class BeaconsMapTableComponent extends LitElement {
 
     if (!!self.map) {
       self.map.ondetails = async (beacon) => {
-        dialog.beacon = beacon
-
-        if (!!self.tourismPoisSupported) {
-          let loadingOverlay = document.createElement('beacons-map-table-loading-overlay')
-          loadingOverlay.message = 'Loading beacon and point-of-interest data...'
-          loadingOverlay.fallback = { timeout: 2000, message: 'Loading beacon and point-of-interest data, almost done...' }
-
-          loadingOverlay.show(root)
-
-          try {
-            dialog.poi = await getNearestTourismPOI(beacon.latitude, beacon.longitude)
-          } catch (error) {
-            // ignored, handled later
-          }
-
-          loadingOverlay.dismiss()
-        }
-
-        if (!!self.tourismPoisSupported && !dialog.poi) {
-          let errorOverlay = document.createElement('beacons-map-table-error-overlay')
-          errorOverlay.message = 'Ooops, an unknown error occurred while loading the required data. If the problem persists, please try again at a later time.'
-          errorOverlay.action = {
-            label: 'Close',
-            callback: async () => {
-              errorOverlay.dismiss()
-            }
-          }
-
-          errorOverlay.show(root)
-        } else {
-          dialog.opened = true
-        }
+        await self.showDetails(beacon)
       }
     }
 
     self.table = root.getElementById('table')
+
+    if (!!self.table) {
+      self.table.ondetails = async (beacon) => {
+        await self.showDetails(beacon)
+      }
+    }
 
     await self.setupData()
 
