@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+    app:
+        image: node
+        working_dir: /code
+        command: ./bin/serve.sh
+        volumes:
+            - ./:/code
+        ports:
+            - "8000:8000"
+
