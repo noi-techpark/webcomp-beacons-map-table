@@ -79,6 +79,8 @@ class BeaconsMapView extends LitElement {
         fill: '#29A8E0'
       }).addTo(self.map)
 
+      bounds.extend(circle.getBounds())
+
       self.overlays.push(circle)
     }
 
@@ -105,7 +107,7 @@ class BeaconsMapView extends LitElement {
 
     if (bounds.isValid()) {
       self.map.fitBounds(bounds, {
-        padding: [24, 24]
+        padding: [32, 32]
       })
     }
   }

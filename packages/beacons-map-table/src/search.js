@@ -42,7 +42,7 @@ class BeaconsSearchWidget extends LitElement {
 
         #suggestions {
           --paper-item-min-height: 48px;
-          
+
           position: absolute;
           width: 280px;
         }
@@ -156,27 +156,22 @@ class BeaconsSearchWidget extends LitElement {
         clearButton.style.visibility = 'visible'
 
         let items = await searchLocations(self.search.value)
+        items = items.filter((result) => result.class === 'boundary' || result.class === 'place' || result.class === 'landuse')
 
         if (timestamp === mostRecentSearchAttempt) {
           if (!self.search.readonly) {
             suggestions.suggestions(items.map((item) => {
-              let text = item.display_name
-
-              if (!!item.address.village || !!item.address.city) {
-                if (!!item.address.road) {
-                  if (!!item.house_number) {
-                    text = item.address.road + ' ' + item.house_number + ', ' + (item.address.village || item.address.city)
-                  } else {
-                    text = item.address.road + ', ' + (item.address.village || item.address.city)
-                  }
-                } else {
-                  text = (item.address.village || item.address.city)
-                }
-              }
+              let parts = []
+              parts.push(item.address.industrial || '')
+              parts.push(item.address.path || '')
+              parts.push(item.address.road || '')
+              parts.push(item.address.house_number || '')
+              parts.push(item.address.village || '')
+              parts.push(item.address.city || '')
 
               return {
                 value: item,
-                text: text
+                text: parts.filter((part) => !!part).join(', ')
               }
             }))
           } else {
