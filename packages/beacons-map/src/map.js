@@ -56,7 +56,7 @@ class BeaconsMapView extends LitElement {
     `
   }
 
-  bind (beacons, filter) {
+  bind(beacons, filter) {
     let self = this
 
     for (var id in self.overlays) {
@@ -84,26 +84,28 @@ class BeaconsMapView extends LitElement {
       self.overlays.push(circle)
     }
 
-    beacons.forEach((beacon) => {
-      let marker = L.marker([ beacon.latitude, beacon.longitude ], {
-        icon: L.icon({
-          iconUrl: 'data:image/svg+xml;base64,' + btoa(defaultMarkerImage),
-          iconSize: [24, 24],
-          iconAnchor: [12, 24]
-        }),
-        title: beacon.name
-      }).on('click', () => ((beacon) => {
-        if (!!self.ondetails) {
-          self.ondetails(beacon)
-        }
-      })(beacon))
+    if (!!beacons) {
+      beacons.forEach((beacon) => {
+        let marker = L.marker([ beacon.latitude, beacon.longitude ], {
+          icon: L.icon({
+            iconUrl: 'data:image/svg+xml;base64,' + btoa(defaultMarkerImage),
+            iconSize: [24, 24],
+            iconAnchor: [12, 24]
+          }),
+          title: beacon.name
+        }).on('click', () => ((beacon) => {
+          if (!!self.ondetails) {
+            self.ondetails(beacon)
+          }
+        })(beacon))
 
-      self.clusters.addLayer(marker)
+        self.clusters.addLayer(marker)
 
-      bounds.extend(marker.getLatLng())
+        bounds.extend(marker.getLatLng())
 
-      self.markers.push(marker)
-    })
+        self.markers.push(marker)
+      })
+    }
 
     if (bounds.isValid()) {
       self.map.fitBounds(bounds, {
@@ -112,7 +114,7 @@ class BeaconsMapView extends LitElement {
     }
   }
 
-  async firstUpdated () {
+  async firstUpdated() {
     let self = this
     let root = this.shadowRoot
 
@@ -145,9 +147,9 @@ class BeaconsMapView extends LitElement {
 
     self.map.addLayer(self.clusters)
 
-    setTimeout(() => {
+    document.addEventListener('DOMContentLoaded', () => {
       self.map.invalidateSize()
-    }, 500)
+    })
   }
 
 }
