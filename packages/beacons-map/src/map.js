@@ -48,6 +48,7 @@ class BeaconsMapView extends LitElement {
 
         #map .marker-cluster span {
           color: #ffffff;
+          font-family: 'Helvetica Neue', sans-serif;
           line-height: 30px;
         }
       </style>
@@ -55,46 +56,65 @@ class BeaconsMapView extends LitElement {
     `
   }
 
-  bind (beacons) {
+  bind(beacons, filter) {
     let self = this
+
+    for (var id in self.overlays) {
+      self.map.removeLayer(self.overlays[id])
+    }
 
     for (var id in self.markers) {
       self.clusters.removeLayer(self.markers[id])
     }
 
+    self.overlays = []
     self.markers = []
 
     const bounds = L.latLngBounds()
 
-    beacons.forEach((beacon) => {
-      let marker = L.marker([ beacon.latitude, beacon.longitude ], {
-        icon: L.icon({
-          iconUrl: 'data:image/svg+xml;base64,' + btoa(defaultMarkerImage),
-          iconSize: [24, 24],
-          iconAnchor: [12, 24]
-        }),
-        title: beacon.name
-      }).on('click', () => ((beacon) => {
-        if (!!self.ondetails) {
-          self.ondetails(beacon)
-        }
-      })(beacon))
-      
-      self.clusters.addLayer(marker)
+    if (!!filter && !!filter.center && !!filter.radius) {
+      let circle = L.circle(filter.center, {
+        radius: filter.radius,
+        color: '#29A8E0',
+        fill: '#29A8E0'
+      }).addTo(self.map)
 
-      bounds.extend(marker.getLatLng())
+      bounds.extend(circle.getBounds())
 
-      self.markers.push(marker)
-    })
+      self.overlays.push(circle)
+    }
+
+    if (!!beacons) {
+      beacons.forEach((beacon) => {
+        let marker = L.marker([ beacon.latitude, beacon.longitude ], {
+          icon: L.icon({
+            iconUrl: 'data:image/svg+xml;base64,' + btoa(defaultMarkerImage),
+            iconSize: [24, 24],
+            iconAnchor: [12, 24]
+          }),
+          title: beacon.name
+        }).on('click', () => ((beacon) => {
+          if (!!self.ondetails) {
+            self.ondetails(beacon)
+          }
+        })(beacon))
+
+        self.clusters.addLayer(marker)
+
+        bounds.extend(marker.getLatLng())
+
+        self.markers.push(marker)
+      })
+    }
 
     if (bounds.isValid()) {
       self.map.fitBounds(bounds, {
-        padding: [24, 24]
+        padding: [32, 32]
       })
     }
   }
 
-  async firstUpdated () {
+  async firstUpdated() {
     let self = this
     let root = this.shadowRoot
 
@@ -106,11 +126,13 @@ class BeaconsMapView extends LitElement {
 
     const mapElement = root.getElementById('map')
 
+    self.overlays = []
     self.markers = []
 
     self.clusters = L.markerClusterGroup({
       disableClusteringAtZoom: 12,
-      maxClusterRadius: 32
+      maxClusterRadius: 32,
+      showCoverageOnHover: false
     })
 
     self.map = L.map(mapElement, {
@@ -125,9 +147,9 @@ class BeaconsMapView extends LitElement {
 
     self.map.addLayer(self.clusters)
 
-    setTimeout(() => {
+    document.addEventListener('DOMContentLoaded', () => {
       self.map.invalidateSize()
-    }, 500)
+    })
   }
 
 }

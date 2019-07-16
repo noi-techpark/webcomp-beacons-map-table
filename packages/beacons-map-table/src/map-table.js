@@ -1,11 +1,14 @@
 import { LitElement, html } from 'lit-element'
 import '@polymer/iron-pages/iron-pages.js'
-import '@polymer/paper-spinner/paper-spinner.js'
-import '@vaadin/vaadin-button/vaadin-button.js'
-import '@vaadin/vaadin-dialog/vaadin-dialog.js'
+import '@polymer/paper-dialog/paper-dialog.js'
+import '@polymer/paper-tabs/paper-tab.js'
+import '@polymer/paper-tabs/paper-tabs.js'
 import { getBeacons, getNearestTourismPOI } from 'beacons-api'
 import 'beacons-map'
 import 'beacons-table'
+import './dialog.js'
+import './error-overlay.js'
+import './loading-overlay.js'
 import './search.js'
 
 class BeaconsMapTableComponent extends LitElement {
@@ -29,18 +32,42 @@ class BeaconsMapTableComponent extends LitElement {
     return html`
       <style>
         :host {
-          display: flex;
-          flex-flow: column;
-          height: 480px;
+          --paper-font-common-base_-_font-family: "Helvetica Neue", sans-serif;
+          --paper-font-subhead_-_font-family: "Helvetica Neue", sans-serif;
+          --paper-input-container-shared-input-style_-_font-family: "Helvetica Neue", sans-serif;
+
+          display: block;
           min-height: 480px;
           position: relative;
           width: 100%;
         }
 
-        #loader {
-          background: rgba(255, 255, 255, 0.6);
+        :host([size="wide"]) {
+          padding-top: 56.25%;
+        }
+
+        :host([size="classic"]) {
+          padding-top: 75%;
+        }
+
+        :host([size="full"]) {
+          padding-top: 100%;
+        }
+
+        #root {
           bottom: 0;
-          display: none;
+          display: flex;
+          flex-flow: column;
+          height: 100%;
+          left: 0;
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: 100%;
+        }
+
+        beacons-map-table-loading-overlay, beacons-map-table-error-overlay {
+          bottom: 0;
           left: 0;
           position: absolute;
           right: 0;
@@ -48,23 +75,16 @@ class BeaconsMapTableComponent extends LitElement {
           z-index: 2000;
         }
 
-        #spinner {
-          left: 50%;
-          position: absolute;
-          top: 50%;
-          transform: translate(-50%, -50%);
-        }
-
-        header {
-          position: relative;
-        }
-
         #search {
-          width: 240px;
+          float: left;
         }
 
-        #buttons {
+        #tabs {
+          --paper-tabs-selection-bar-color: #29A8E0;
+          --paper-tab-ink: #29A8E0;
+
           float: right;
+          margin: 2px 0 0 0;
         }
 
         #pages {
@@ -76,206 +96,180 @@ class BeaconsMapTableComponent extends LitElement {
           width: 100%;
         }
       </style>
-      <div id="loader">
-        <paper-spinner id="spinner" active="true"></paper-spinner>
+      <div id="root">
+        <header id="header">
+          ${!!this.searchSupported?
+            html`<beacons-search id="search"></beacons-search>`:
+            html``
+          }
+          ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
+            html`
+            <paper-tabs id="tabs" selected="0">
+              <paper-tab>MAP</paper-tab>
+              <paper-tab>TABLE</paper-tab>
+            </paper-tabs>
+            `:
+            html``
+          }
+        </header>
+        <iron-pages selected="0" id="pages">
+          ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
+            html`
+            <beacons-map id="map"></beacons-map>
+            <beacons-table id="table"></beacons-table>
+            `:
+            html``
+          }
+          ${!!this.view && this.view === 'map'?
+            html`
+            <beacons-map id="map"></beacons-map>
+            `:
+            html``
+          }
+          ${!!this.view && this.view === 'table'?
+            html`
+            <beacons-table id="table"></beacons-table>
+            `:
+            html``
+          }
+        </iron-pages>
       </div>
-      <header id="header">
-        ${!!this.searchSupported?
-          html`<beacons-search id="search"></beacons-search>`:
-          html``
-        }
-        ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
-          html`
-          <div id="buttons">
-            <vaadin-button id="view-map" theme="primary">MAP</vaadin-button>
-            <vaadin-button id="view-table" theme="">TABLE</vaadin-button>
-          </div>
-          `:
-          html``
-        }
-      </header>
-      <iron-pages selected="0" id="pages">
-        ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
-          html`
-          <beacons-map id="map"></beacons-map>
-          <beacons-table id="table"></beacons-table>
-          `:
-          html``
-        }
-        ${!!this.view && this.view === 'map'?
-          html`
-          <beacons-map id="map"></beacons-map>
-          `:
-          html``
-        }
-        ${!!this.view && this.view === 'table'?
-          html`
-          <beacons-table id="table"></beacons-table>
-          `:
-          html``
-        }
-      </iron-pages>
-      <vaadin-dialog id="dialog" theme="beacon"></vaadin-dialog>
-      <dom-module id="beacon-dialog-overlay-styles" theme-for="vaadin-dialog-overlay">
-        <template>
-          <style>
-            :host([theme~="beacon"]) [part="overlay"] {
-              z-index: 1000;
-            }
-          </style>
-        </template>
-      </dom-module>
     `
+  }
+
+  async setupData() {
+    let self = this
+    let root = this.shadowRoot
+
+    let loadingOverlay = document.createElement('beacons-map-table-loading-overlay')
+    loadingOverlay.message = 'Loading beacons data...'
+    loadingOverlay.fallback = { timeout: 2500, message: 'Loading beacons data, almost done...' }
+
+    loadingOverlay.show(root)
+
+    try {
+      self.beacons = await getBeacons()
+
+      loadingOverlay.dismiss()
+    } catch (err) {
+      // ignore, since we catch it later
+    }
+
+    if (!self.beacons) {
+      let errorOverlay = document.createElement('beacons-map-table-error-overlay')
+      errorOverlay.message = 'Ooops, an unknown error occurred while loading the required data. If the problem persists, please try again at a later time.'
+      errorOverlay.action = {
+        label: 'Try again',
+        callback: async () => {
+          errorOverlay.dismiss()
+          await self.setupData()
+        }
+      }
+
+      errorOverlay.show(root)
+    } else {
+      if (!!self.map) {
+        self.map.bind(self.beacons, null)
+      }
+
+      if (!!self.table) {
+        self.table.bind(self.beacons, null)
+      }
+    }
+  }
+
+  async showDetails(beacon) {
+    let self = this
+    let root = this.shadowRoot
+
+    let tourismPoi = null
+
+    if (!!self.tourismPoisSupported) {
+      let loadingOverlay = document.createElement('beacons-map-table-loading-overlay')
+      loadingOverlay.message = 'Loading beacon and point-of-interest data...'
+      loadingOverlay.fallback = { timeout: 2000, message: 'Loading beacon and point-of-interest data, almost done...' }
+
+      loadingOverlay.show(root)
+
+      try {
+        tourismPoi = await getNearestTourismPOI(beacon.latitude, beacon.longitude)
+      } catch (error) {
+        // ignored, handled later
+      }
+
+      loadingOverlay.dismiss()
+    }
+
+    if (!!self.tourismPoisSupported && !tourismPoi) {
+      let errorOverlay = document.createElement('beacons-map-table-error-overlay')
+      errorOverlay.message = 'Ooops, an unknown error occurred while loading the required data. If the problem persists, please try again at a later time.'
+      errorOverlay.action = {
+        label: 'Close',
+        callback: async () => {
+          errorOverlay.dismiss()
+        }
+      }
+
+      errorOverlay.show(root)
+    } else {
+      let dialog = document.createElement('beacons-map-table-dialog')
+      dialog.beacon = beacon
+      dialog.tourismPoi = tourismPoi
+
+      root.appendChild(dialog)
+    }
   }
 
   async firstUpdated() {
     let self = this
     let root = this.shadowRoot
 
-    const loader = root.getElementById('loader')
     const header = root.getElementById('header')
     const search = root.getElementById('search')
-    const mapButton = root.getElementById('view-map')
-    const tableButton = root.getElementById('view-table')
+    const tabs = root.getElementById('tabs')
     const pages = root.getElementById('pages')
-    const dialog = root.getElementById('dialog')
 
-    dialog.renderer = (root, dialog) => {
-      let createTitle = (text) => {
-        const titleElement = window.document.createElement('h4')
-        titleElement.textContent = text
-        titleElement.style.fontSize = '1.5em'
-        titleElement.style.fontWeight = 'bold'
-        titleElement.style.margin = 0
-
-        root.appendChild(titleElement)
+    tabs.addEventListener('iron-select', function(e) {
+      if (pages.selected !== tabs.selected) {
+        pages.selected = tabs.selected
       }
-
-      let createField = (id, label) => {
-        const labelElement = window.document.createElement('label')
-        labelElement.textContent = label
-        labelElement.style.fontWeight = 'bold'
-
-        const fieldElement = window.document.createElement('div')
-        fieldElement.setAttribute('id', id)
-        fieldElement.style.width = '480px'
-
-        root.appendChild(labelElement)
-        root.appendChild(fieldElement)
-      }
-
-      if (!root.firstElementChild) {
-        createTitle('BEACON')
-        createField('beacon-uuid', 'UUID')
-        createField('beacon-major', 'MAJOR')
-        createField('beacon-minor', 'MINOR')
-        createField('beacon-position', 'POSITION')
-
-        if (!!self.tourismPoisSupported) {
-          root.appendChild(window.document.createElement('hr'))
-
-          createTitle('NEAREST POI')
-          createField('poi-id', 'ID')
-          createField('poi-name', 'NAME')
-          createField('poi-municipality', 'MUNICIPALITY')
-          createField('poi-district', 'DISTRICT')
-          createField('poi-position', 'POSITION')
-        }
-      }
-
-      document.getElementById('beacon-uuid').textContent = dialog.beacon.uuid
-      document.getElementById('beacon-major').textContent = dialog.beacon.major
-      document.getElementById('beacon-minor').textContent = dialog.beacon.minor
-      document.getElementById('beacon-position').textContent = dialog.beacon.latitude + ', ' + dialog.beacon.longitude
-
-      if (!!self.tourismPoisSupported) {
-        document.getElementById('poi-id').textContent = dialog.poi.Id
-        document.getElementById('poi-name').textContent = dialog.poi.Shortname
-
-        if (!!dialog.poi.LocationInfo.MunicipalityInfo) {
-          document.getElementById('poi-municipality').textContent = dialog.poi.LocationInfo.MunicipalityInfo.Name.de
-        } else {
-          document.getElementById('poi-municipality').innerHTML = '&mdash;'
-        }
-
-        if (!!dialog.poi.LocationInfo.DistrictInfo) {
-          document.getElementById('poi-district').textContent = dialog.poi.LocationInfo.DistrictInfo.Name.de
-        } else {
-          document.getElementById('poi-district').innerHTML = '&mdash;'
-        }
-
-        let infos = dialog.poi.GpsInfo.filter(info => info.Gpstype === 'position')
-
-        document.getElementById('poi-position').textContent = infos[0].Latitude + ', ' + infos[0].Longitude
-      }
-    }
-
-    if (!!mapButton) {
-      mapButton.addEventListener('click', () => {
-          pages.selected = 0
-          mapButton.setAttribute('theme', 'primary')
-          tableButton.setAttribute('theme', '')
-      })
-    }
-
-    if (!!tableButton) {
-      tableButton.addEventListener('click', () => {
-          pages.selected = 1
-          mapButton.setAttribute('theme', '')
-          tableButton.setAttribute('theme', 'primary')
-      })
-    }
+    })
 
     self.map = root.getElementById('map')
 
     if (!!self.map) {
       self.map.ondetails = async (beacon) => {
-        dialog.beacon = beacon
-
-        if (!!self.tourismPoisSupported) {
-          loader.style.display = 'block'
-
-          dialog.poi = await getNearestTourismPOI(beacon.latitude, beacon.longitude)
-
-          loader.style.display = 'none'
-        }
-
-        dialog.opened = true
+        await self.showDetails(beacon)
       }
     }
 
     self.table = root.getElementById('table')
 
-    loader.style.display = 'block'
-    header.style.visibility = 'hidden'
-    pages.style.visibility = 'hidden'
-
-    self.beacons = await getBeacons()
-
-    if (!!self.map) {
-      self.map.bind(self.beacons)
-    }
-
     if (!!self.table) {
-      self.table.bind(self.beacons)
-    }
-
-    if (!!search) {
-      search.beacons = self.beacons
-      search.onsearch = (beacons) => {
-        if (!!self.map) {
-          self.map.bind(beacons)
-        }
-
-        if (!!self.table) {
-          self.table.bind(beacons)
-        }
+      self.table.ondetails = async (beacon) => {
+        await self.showDetails(beacon)
       }
     }
 
-    loader.style.display = 'none'
-    header.style.visibility = 'visible'
-    pages.style.visibility = 'visible'
+    await self.setupData()
+
+    if (!!search) {
+      search.onfilter = (filter) => {
+        let results = self.beacons
+
+        if (!!filter && !!filter.fn) {
+          results = self.beacons.filter(filter.fn)
+        }
+
+        if (!!self.map) {
+          self.map.bind(results, filter)
+        }
+
+        if (!!self.table) {
+          self.table.bind(results, filter)
+        }
+      }
+    }
   }
 
 }
