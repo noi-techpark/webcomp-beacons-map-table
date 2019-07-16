@@ -4,13 +4,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
     <script src="./beacons-map-table.min.js"></script>
     <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
+      body {
+        box-sizing: border-box;
+        padding: 32px;
+      }
       #component {
-        height: 640px;
+        box-sizing: border-box;
+        height: 100%;
         width: 100%;
       }
     </style>
   </head>
-  <body style="margin: 0; padding: 24px;">
-    <beacons-map-table id="component" view="all" search></beacons-map-table>
+  <body>
+    <beacons-map-table id="component" view="all" search tourism-pois></beacons-map-table>
   </body>
 </html>
