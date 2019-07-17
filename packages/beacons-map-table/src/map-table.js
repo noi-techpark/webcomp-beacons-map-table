@@ -229,11 +229,13 @@ class BeaconsMapTableComponent extends LitElement {
     const tabs = root.getElementById('tabs')
     const pages = root.getElementById('pages')
 
-    tabs.addEventListener('iron-select', function(e) {
-      if (pages.selected !== tabs.selected) {
-        pages.selected = tabs.selected
-      }
-    })
+    if (!!tabs) {
+      tabs.addEventListener('iron-select', function(e) {
+        if (pages.selected !== tabs.selected) {
+          pages.selected = tabs.selected
+        }
+      })
+    }
 
     self.map = root.getElementById('map')
 
