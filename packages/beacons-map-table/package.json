@@ -19,17 +19,20 @@
     "beacons-map": "0.0.1",
     "beacons-table": "0.0.1",
     "geolib": "^3.0.4",
-    "lodash": "^4.17.14",
+    "lodash": "^4.17.15",
     "paper-autocomplete": "^3.0.0"
   },
   "scripts": {
     "build": "webpack --config webpack.config.js"
   },
   "devDependencies": {
+    "@open-wc/building-webpack": "^2.3.1",
+    "@open-wc/polyfills-loader": "^0.3.2",
     "babel-polyfill": "^6.26.0",
     "css-loader": "^3.0.0",
     "svg-inline-loader": "^0.8.0",
     "webpack": "^4.35.0",
-    "webpack-cli": "^3.3.5"
+    "webpack-cli": "^3.3.5",
+    "webpack-merge": "^4.2.1"
   }
 }
