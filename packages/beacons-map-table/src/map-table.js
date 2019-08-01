@@ -182,25 +182,32 @@ class BeaconsMapTableComponent extends LitElement {
     let self = this
     let root = this.shadowRoot
 
+    let loadingOverlay = null
     let tourismPoi = null
 
-    if (!!self.tourismPoisSupported) {
-      let loadingOverlay = document.createElement('beacons-map-table-loading-overlay')
-      loadingOverlay.message = 'Loading beacon and point-of-interest data...'
-      loadingOverlay.fallback = { timeout: 2000, message: 'Loading beacon and point-of-interest data, almost done...' }
+    try {
+      if (!!self.tourismPoisSupported) {
+        loadingOverlay = document.createElement('beacons-map-table-loading-overlay')
+        loadingOverlay.message = 'Loading beacon and point-of-interest data...'
+        loadingOverlay.fallback = { timeout: 2000, message: 'Loading beacon and point-of-interest data, almost done...' }
 
-      loadingOverlay.show(root)
+        loadingOverlay.show(root)
 
-      try {
         tourismPoi = await getNearestTourismPOI(beacon.latitude, beacon.longitude)
-      } catch (error) {
-        // ignored, handled later
+
+        loadingOverlay.dismiss()
       }
 
-      loadingOverlay.dismiss()
-    }
+      let dialog = document.createElement('beacons-map-table-dialog')
+      dialog.beacon = beacon
+      dialog.tourismPoi = tourismPoi
 
-    if (!!self.tourismPoisSupported && !tourismPoi) {
+      root.appendChild(dialog)
+    } catch (error) {
+      if (!!loadingOverlay) {
+        loadingOverlay.dismiss()
+      }
+
       let errorOverlay = document.createElement('beacons-map-table-error-overlay')
       errorOverlay.message = 'Ooops, an unknown error occurred while loading the required data. If the problem persists, please try again at a later time.'
       errorOverlay.action = {
@@ -211,12 +218,6 @@ class BeaconsMapTableComponent extends LitElement {
       }
 
       errorOverlay.show(root)
-    } else {
-      let dialog = document.createElement('beacons-map-table-dialog')
-      dialog.beacon = beacon
-      dialog.tourismPoi = tourismPoi
-
-      root.appendChild(dialog)
     }
   }
 
