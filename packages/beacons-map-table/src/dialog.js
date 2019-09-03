@@ -3,6 +3,7 @@ import '@polymer/iron-pages/iron-pages.js'
 import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-tabs/paper-tab.js'
 import '@polymer/paper-tabs/paper-tabs.js'
+import * as geolib from 'geolib'
 
 class BeaconsMapTableBeaconDialog extends LitElement {
 
@@ -89,7 +90,9 @@ class BeaconsMapTableBeaconDialog extends LitElement {
                   <span>${this.tourismPoi.latitude}, ${this.tourismPoi.longitude}</span>
                 ` : html`<span>&mdash;</span>`}
                 <label>DISTANCE</label>
-                <span>${this.tourismPoi.distance} meters</span>
+                ${!!this.tourismPoi.latitude && !!this.tourismPoi.longitude ? html`
+                  <span>${geolib.getDistance(this.beacon, this.tourismPoi)} meters</span>
+                ` : html`<span>&mdash;</span>`}
               </div>
             `:
             html``
