@@ -24,8 +24,7 @@ export async function getNearestTourismPOI(latitude, longitude) {
       municipality: null,
       district: null,
       latitude: null,
-      longitude: null,
-      distance: null
+      longitude: null
     }
 
     if (!!item.AdditionalPoiInfos && !!item.AdditionalPoiInfos.en) {
@@ -43,10 +42,6 @@ export async function getNearestTourismPOI(latitude, longitude) {
     if (!!item.GpsPoints && !!item.GpsPoints.position) {
       poi.latitude = item.GpsPoints.position.Latitude
       poi.longitude = item.GpsPoints.position.Longitude
-    }
-
-    if (typeof item.DistanceLength !== 'undefined') {
-      poi.distance = item.DistanceLength
     }
 
     return poi
