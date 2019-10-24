@@ -1,0 +1,35 @@
+{
+  "title": "Beacons Map/Table",
+  "description": "The following web-component exposes the data collected and maintained for the \"BEACON SÜDTIROL - ALTO ADIGE\" project coupled together with the tourism data from \"OPENDATHUB\".",
+  "descriptionAbstract": "Beacons Map/Table Webcomponent",
+  "license": "AGPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "NOI",
+      "email": "info@noi.bz.it",
+      "organization": "NOI S.p.A",
+      "organizationUrl": "https://noi.bz.it"
+    }
+  ],
+  "image": null,
+  "searchTags": ["map"],
+  "dist": {
+    "basePath": "dist",
+    "files": [
+      "beacons-map-table.min.js"
+    ]
+  },
+  "configuration": {
+    "tagName": "beacons-map-table",
+    "options": [
+      {
+        "key": "view",
+        "type": "select",
+        "options": {
+          "values": ["all", "map", "table"],
+          "default": "all"
+        }
+      }
+    ]
+  }
+}
