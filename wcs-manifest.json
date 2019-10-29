@@ -2,7 +2,7 @@
   "title": "Beacons Map/Table",
   "description": "The following web-component exposes the data collected and maintained for the \"BEACON SÜDTIROL - ALTO ADIGE\" project coupled together with the tourism data from \"OPENDATHUB\".",
   "descriptionAbstract": "Beacons Map/Table Webcomponent",
-  "license": "AGPL-3.0-or-later",
+  "license": "AGPL-3.0",
   "authors": [
     {
       "name": "NOI",
