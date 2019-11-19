@@ -108,6 +108,8 @@ class BeaconsMapView extends LitElement {
       })
     }
 
+    self.map.invalidateSize()
+
     if (bounds.isValid()) {
       self.map.fitBounds(bounds, {
         padding: [32, 32]
@@ -145,6 +147,8 @@ class BeaconsMapView extends LitElement {
     document.addEventListener('DOMContentLoaded', () => {
       self.map.invalidateSize()
     })
+
+    self.map.invalidateSize()
   }
 
 }
