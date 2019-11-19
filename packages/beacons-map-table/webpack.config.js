@@ -4,7 +4,10 @@ const path = require('path')
 
 module.exports = merge(
   defaultConfig({
-    input: './src/index.html'
+    input: './src/index.html',
+    plugins: {
+      workbox: false
+    }
   }),
   {
     mode: 'production',
@@ -21,6 +24,10 @@ module.exports = merge(
         {
           test: /\.svg$/,
           use: 'svg-inline-loader'
+        },
+        {
+          test: /\.(gif|png|jpe?g)$/i,
+          use: 'url-loader',
         }
       ]
     }
