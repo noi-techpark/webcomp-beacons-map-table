@@ -6,6 +6,8 @@
   "private": true,
   "main": "./src/map.js",
   "dependencies": {
+    "leaflet": "^1.6.0",
+    "leaflet.markercluster": "^1.4.1",
     "lit-element": "^2.2.0"
   }
 }
