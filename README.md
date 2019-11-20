@@ -73,6 +73,12 @@ folder, namely `beacons-map-table.min.js`.
 
     bin/build.sh
 
+### Developing
+
+When working on the project, it is possible to continuosly watch all relevant files for changes and update the browser automatically (if opened and LiveReload is supported). This command won't affect the files in the `dist` folder.
+
+    bin/watch.sh    
+
 ### Preview
 
 The built components can be previewed and evaluated using a built-in server at
