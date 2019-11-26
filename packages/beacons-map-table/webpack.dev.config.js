@@ -10,9 +10,13 @@ module.exports = merge(
     }
   }),
   {
-    mode: 'production',
+    mode: 'development',
+    devServer: {
+      hot: false
+    },
+    watch: true,
     output: {
-      path: path.resolve(__dirname + '/../../', 'dist'),
+      path: path.resolve(__dirname + '/../../', 'tmp'),
       filename: 'beacons-map-table.min.js'
     },
     module: {
