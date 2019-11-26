@@ -102,7 +102,7 @@ Build and start the project:
 yarn run serve
 ```
 
-The application will be served and can be accessed at [http://localhost:8000](http://localhost:8000).
+The application will be served and can be accessed at [http://localhost:80080](http://localhost:80080).
 
 ## Deployment
 
