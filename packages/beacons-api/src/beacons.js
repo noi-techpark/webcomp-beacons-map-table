@@ -8,5 +8,5 @@ export async function getBeacons() {
 
   let json = await response.json()
 
-  return json.filter(beacon => !!beacon.latitude && !!beacon.longitude && (!!beacon.address || !!beacon.location))
+  return json.filter(beacon => !!beacon.latitude && !!beacon.longitude)
 }

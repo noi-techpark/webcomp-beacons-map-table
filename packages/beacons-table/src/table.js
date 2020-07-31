@@ -52,8 +52,22 @@ class BeaconsTableView extends LitElement {
 
     if (!!beacons) {
       self.table.items = beacons.map((beacon) => {
+        var place = []
+
+        if (!!beacon.address) {
+          place.push(beacon.address)
+        }
+
+        if (!!beacon.location) {
+          place.push(beacon.location)
+        }
+
+        if (!!beacon.cap) {
+          place.push(beacon.cap)
+        }
+
         return _.extend({
-          place: (beacon.location || beacon.address) + ', ' + beacon.cap,
+          place: place.join(', '),
           position: beacon.latitude + ', ' + beacon.longitude
         }, _.cloneDeep(beacon))
       })

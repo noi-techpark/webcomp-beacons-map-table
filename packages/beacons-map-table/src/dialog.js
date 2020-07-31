@@ -60,17 +60,18 @@ class BeaconsMapTableBeaconDialog extends LitElement {
             <label>NAME</label>
             <span>${this.beacon.name}</span>
             <label>ADDRESS</label>
-            <span>${this.beacon.address}</span>
+            <span>${!!this.beacon.address ? html`${this.beacon.address}` : html`&mdash;`}</span>
             <label>LOCATION</label>
             <span>
-              ${this.beacon.location && !this.beacon.cap ? html`${this.beacon.location}` : html``}
-              ${this.beacon.location && this.beacon.cap ? html`${this.beacon.location}, ${this.beacon.cap}` : html``}
-              ${!this.beacon.location ? html`&mdash;` : html``}
+              ${!!this.beacon.location && !!this.beacon.cap ? html`${this.beacon.location}, ${this.beacon.cap}` : html``}
+              ${!!this.beacon.location && !this.beacon.cap ? html`${this.beacon.location}` : html``}
+              ${!this.beacon.location && !!this.beacon.cap ? html`${this.beacon.cap}` : html``}
+              ${!this.beacon.location && !this.beacon.cap ? html`&mdash;` : html``}
             </span>
             <label>POSITION</label>
             <span>${this.beacon.latitude}, ${this.beacon.longitude}</span>
             <label>WEBSITE</label>
-            <span>${this.beacon.website ? html`<a href="${this.beacon.website}" target="_blank">${this.beacon.website}</a>` : html`&mdash;`}</span>
+            <span>${!!this.beacon.website ? html`<a href="${this.beacon.website}" target="_blank">${this.beacon.website}</a>` : html`&mdash;`}</span>
           </div>
           ${!!this.tourismPoi ?
             html`
