@@ -43,7 +43,9 @@ class BeaconsSearchWidget extends LitElement {
         #suggestions {
           --paper-item-min-height: 48px;
 
+          left: 0;
           position: absolute;
+          top: 50px;
           width: 280px;
         }
       </style>
@@ -161,7 +163,7 @@ class BeaconsSearchWidget extends LitElement {
         if (timestamp === mostRecentSearchAttempt) {
           if (!self.search.readonly) {
             suggestions.suggestions(items.map((item) => {
-              let parts = []
+              var parts = []
               parts.push(item.address.industrial || '')
               parts.push(item.address.path || '')
               parts.push(item.address.road || '')
@@ -169,9 +171,18 @@ class BeaconsSearchWidget extends LitElement {
               parts.push(item.address.village || '')
               parts.push(item.address.city || '')
 
+              parts = parts.filter((part) => !!part)
+
+              if (parts.length === 0) {
+                parts.push(item.address.county || '')
+                parts.push(item.address.state || '')
+              }
+
+              parts = parts.filter((part) => !!part)
+
               return {
                 value: item,
-                text: parts.filter((part) => !!part).join(', ')
+                text: parts.join(', ')
               }
             }))
           } else {
