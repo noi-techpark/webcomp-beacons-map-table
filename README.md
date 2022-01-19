@@ -1,5 +1,7 @@
 # webcomp-beacons-map-table
 
+[![ci webcomp-beacons-map-table](https://github.com/noi-techpark/webcomp-beacons-map-table/actions/workflows/ci.yml/badge.svg)](https://github.com/noi-techpark/webcomp-beacons-map-table/actions/workflows/ci.yml)
+
 The following web-component exposes the data collected and maintained for the
 "[BEACON SÜDTIROL - ALTO ADIGE](https://beacon.bz.it)" project coupled together
 with the tourism data from "[OPENDATHUB](https://tourism.opendatahub.bz.it)".
