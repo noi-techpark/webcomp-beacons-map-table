@@ -1,6 +1,6 @@
 # webcomp-beacons-map-table
 
-[![CI](https://github.com/noi-techpark/webcomp-beacons-map-table/actions/workflows/ci.yml/badge.svg)](https://github.com/noi-techpark/webcomp-beacons-map-table/actions/workflows/ci.yml)
+[![CI](https://github.com/noi-techpark/webcomp-beacons-map-table/actions/workflows/main.yml/badge.svg)](https://github.com/noi-techpark/webcomp-beacons-map-table/actions/workflows/main.yml)
 
 The following web-component exposes the data collected and maintained for the
 "[BEACON SÜDTIROL - ALTO ADIGE](https://beacon.bz.it)" project coupled together
@@ -17,6 +17,8 @@ managed by [NPM](https://www.npmjs.com), the build process is powered mainly by
 The `beacons-map-table` web-component shows all beacon devices, using a map or a
 table view, deployed in the region and can optionally associate them to the
 nearest point-of-interest.
+
+Do you want to see it in action? Go to our [web component store](https://webcomponents.opendatahub.bz.it/webcomponent/2e117771-7047-4e26-b313-8b1a315ae75f)!
 
 ## Table of contents
 
@@ -70,7 +72,7 @@ on your local machine for development and testing purposes.
 
 To build the project, the following prerequisites must be met:
 
-- Node 12 / Yarn 1
+- Node 12 / NPM 8.1.2
 
 For a ready to use Docker environment with all prerequisites already installed and prepared, you can check out the [Docker environment](#docker-environment) section.
 
@@ -93,7 +95,7 @@ cd webcomp-beacons-map-table/
 Download all dependencies:
 
 ```bash
-yarn install
+npm install
 ```
 
 ### Build
@@ -101,7 +103,7 @@ yarn install
 Build and start the project:
 
 ```bash
-yarn run serve
+npm run serve
 ```
 
 The application will be served and can be accessed at [http://localhost:80080](http://localhost:80080).
@@ -111,7 +113,7 @@ The application will be served and can be accessed at [http://localhost:80080](h
 To create the distributable files, execute the following command:
 
 ```bash
-yarn run build
+npm run build
 ```
 
 ## Docker environment
@@ -129,7 +131,7 @@ Install [Docker](https://docs.docker.com/install/) (with Docker Compose) locally
 First, install all dependencies:
 
 ```bash
-docker-compose run --rm app /bin/bash -c "yarn install"
+docker-compose run --rm app /bin/bash -c "npm install"
 ```
 
 ### Start and stop the containers
@@ -157,7 +159,7 @@ docker-compose run --rm app /bin/bash -c "..."
 Some examples are:
 
 ```bash
-docker-compose run --rm app /bin/bash -c "yarn run build"
+docker-compose run --rm app /bin/bash -c "npm run build"
 ```
 
 ## Information
@@ -168,17 +170,7 @@ For support, please contact [info@opendatahub.bz.it](mailto:info@opendatahub.bz.
 
 ### Contributing
 
-If you'd like to contribute, please follow the following instructions:
-
-- Fork the repository.
-
-- Checkout a topic branch from the `development` branch.
-
-- Make sure the tests are passing.
-
-- Create a pull request against the `development` branch.
-
-A more detailed description can be found here: [https://github.com/noi-techpark/documentation/blob/master/contributors.md](https://github.com/noi-techpark/documentation/blob/master/contributors.md).
+If you'd like to contribute, please follow the Contributor Guidelines that can be found at [https://github.com/noi-techpark/odh-docs/wiki/Contributor-Guidelines%3A-Getting-started](https://github.com/noi-techpark/odh-docs/wiki/Contributor-Guidelines%3A-Getting-started).
 
 ### Documentation
 
