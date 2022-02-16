@@ -1,4 +1,4 @@
-# webcomp-beacons-map-table
+# Beacons Map/Table Webcomponent
 
 [![CI](https://github.com/noi-techpark/webcomp-beacons-map-table/actions/workflows/main.yml/badge.svg)](https://github.com/noi-techpark/webcomp-beacons-map-table/actions/workflows/main.yml)
 
