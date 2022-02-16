@@ -31,7 +31,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'yarn install'
+                sh 'npm install'
             }
         }
         stage('Build') {
@@ -43,7 +43,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'yarn run build'
+                sh 'npm run build'
             }
         }
         stage('Git Tag') {
