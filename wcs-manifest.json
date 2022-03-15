@@ -3,7 +3,7 @@
   "description": "The following web-component exposes the data collected and maintained for the \"BEACON SÜDTIROL - ALTO ADIGE\" project coupled together with the tourism data from \"OPENDATHUB\".",
   "descriptionAbstract": "Beacons Map/Table Webcomponent",
   "license": "AGPL-3.0",
-  "repositoryUrl": "https://github.com/noi-techpark/webcomp-beacons-map-table",
+  "repositoryUrl": "https://github.com/noi-techpark/webcomp-beacons-map-table.git",
   "copyrightHolders": [
     {
       "name": "NOI",
