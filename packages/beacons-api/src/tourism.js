@@ -1,5 +1,5 @@
 export async function getNearestTourismPOI(latitude, longitude) {
-  var url = 'https://tourism.opendatahub.bz.it/api/ODHActivityPoi?latitude={{LAT}}&longitude={{LNG}}&radius={{RADIUS}}&type={{TYPE}}&active=true&origin=webcomp-beacons-map-table' 
+  var url = 'https://tourism.opendatahub.bz.it/v1/ODHActivityPoi?latitude={{LAT}}&longitude={{LNG}}&radius={{RADIUS}}&type={{TYPE}}&active=true&origin=webcomp-beacons-map-table' 
   url = url.replace('{{LAT}}', latitude)
   url = url.replace('{{LNG}}', longitude)
   url = url.replace('{{RADIUS}}', 1000)
