@@ -5,7 +5,7 @@
   "author": "danielrampanelli <hello@danielrampanelli.com>",
   "private": true,
   "devDependencies": {
-    "lerna": "^3.15.0"
+    "lerna": "^6.4.1"
   },
   "scripts": {
     "build": "bin/build.sh",
