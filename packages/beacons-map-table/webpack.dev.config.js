@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2021 NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: CC0-1.0
+
 const defaultConfig = require('@open-wc/building-webpack/modern-config')
 const merge = require('webpack-merge')
 const path = require('path')

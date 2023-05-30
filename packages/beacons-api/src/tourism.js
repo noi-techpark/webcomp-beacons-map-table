@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 export async function getNearestTourismPOI(latitude, longitude) {
   var url = 'https://tourism.opendatahub.bz.it/v1/ODHActivityPoi?latitude={{LAT}}&longitude={{LNG}}&radius={{RADIUS}}&type={{TYPE}}&active=true&origin=webcomp-beacons-map-table' 
   url = url.replace('{{LAT}}', latitude)

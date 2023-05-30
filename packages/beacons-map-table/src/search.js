@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { LitElement, html } from 'lit-element'
 import '@polymer/iron-icons/iron-icons.js'
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js'
