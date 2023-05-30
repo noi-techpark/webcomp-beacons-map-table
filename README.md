@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 # Beacons Map/Table Webcomponent
 
 [![CI](https://github.com/noi-techpark/webcomp-beacons-map-table/actions/workflows/main.yml/badge.svg)](https://github.com/noi-techpark/webcomp-beacons-map-table/actions/workflows/main.yml)
