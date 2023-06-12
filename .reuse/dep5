@@ -3,6 +3,6 @@ Upstream-Name: webcomp-beacons-map-table
 Upstream-Contact: (c) NOI Techpark <digital@noi.bz.it>
 Source: https://github.com/noi-techpark/webcomp-beacons-map-table
 
-Files: .github/* docker/* .gitignore LICENSE.md *.png *.json *.svg
+Files: .github/* docker/* .gitignore .pre-commit-config.yaml LICENSE.md *.png *.json *.svg
 Copyright: (c) NOI Techpark <digital@noi.bz.it>
 License: CC0-1.0
