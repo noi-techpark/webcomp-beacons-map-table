@@ -11,7 +11,7 @@ SPDX-License-Identifier: CC0-1.0
 
 The following web-component exposes the data collected and maintained for the
 "[BEACON SÜDTIROL - ALTO ADIGE](https://beacon.bz.it)" project coupled together
-with the tourism data from "[OPENDATHUB](https://tourism.opendatahub.bz.it)".
+with the tourism data from "[OPENDATHUB](https://tourism.opendatahub.com)".
 
 The web-components in this project are built on top of [Polymer's
 LitElement](https://lit-element.polymer-project.org) and other UI elements and
@@ -25,7 +25,7 @@ The `beacons-map-table` web-component shows all beacon devices, using a map or a
 table view, deployed in the region and can optionally associate them to the
 nearest point-of-interest.
 
-Do you want to see it in action? Go to our [web component store](https://webcomponents.opendatahub.bz.it/webcomponent/2e117771-7047-4e26-b313-8b1a315ae75f)!
+Do you want to see it in action? Go to our [web component store](https://webcomponents.opendatahub.com/webcomponent/2e117771-7047-4e26-b313-8b1a315ae75f)!
 
 ## Table of contents
 
@@ -173,7 +173,7 @@ docker-compose run --rm app /bin/bash -c "npm run build"
 
 ### Support
 
-For support, please contact [info@opendatahub.bz.it](mailto:info@opendatahub.bz.it).
+For support, please contact [info@opendatahub.com](mailto:info@opendatahub.com).
 
 ### Contributing
 
