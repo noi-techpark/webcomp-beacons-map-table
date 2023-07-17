@@ -6,7 +6,7 @@ SPDX-License-Identifier: CC0-1.0
 
 # Beacons Map/Table Webcomponent
 
-![REUSE Compliance](https://github.com/noi-techpark/webcomp-beacons-map-table/actions/workflows/reuse.yml/badge.svg)
+[![REUSE Compliance](https://github.com/noi-techpark/webcomp-beacons-map-table/actions/workflows/reuse.yml/badge.svg)](https://github.com/noi-techpark/odh-docs/wiki/REUSE#badges)
 [![CI](https://github.com/noi-techpark/webcomp-beacons-map-table/actions/workflows/main.yml/badge.svg)](https://github.com/noi-techpark/webcomp-beacons-map-table/actions/workflows/main.yml)
 
 The following web-component exposes the data collected and maintained for the
