@@ -4,6 +4,7 @@
   "descriptionAbstract": "Beacons Map/Table Webcomponent",
   "license": "AGPL-3.0",
   "repositoryUrl": "https://github.com/noi-techpark/webcomp-beacons-map-table.git",
+  "shortName": "beacons-map-table",
   "copyrightHolders": [
     {
       "name": "NOI",
