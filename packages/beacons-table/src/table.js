@@ -20,12 +20,18 @@ class BeaconsTableView extends LitElement {
     return html`
       <style>
         :host {
+          box-sizing: border-box;
+          display: block;
           height: 100%;
+          overflow: hidden;
           width: 100%;
         }
 
         #table {
+          border: 0;
+          box-sizing: border-box;
           height: 100%;
+          overflow: hidden;
           width: 100%;
         }
 

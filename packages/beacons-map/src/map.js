@@ -25,13 +25,29 @@ class BeaconsMapView extends LitElement {
         :host {
           display: block;
           height: 100%;
+          overflow: hidden;
           position: relative;
-          z-index: 100;
         }
 
         #map {
+          border: 0;
+          box-sizing: border-box;
           height: 100%;
-          z-index: 500;
+          overflow: hidden;
+          width: 100%;
+        }
+
+        #map .leaflet-control-container {
+          pointer-events: none;
+        }
+
+        #map .leaflet-control {
+          pointer-events: auto;
+        }
+
+        #map .leaflet-top,
+        #map .leaflet-bottom {
+          z-index: 800;
         }
 
         #map .marker-cluster {

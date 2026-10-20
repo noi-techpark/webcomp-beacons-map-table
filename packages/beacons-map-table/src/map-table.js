@@ -4,7 +4,6 @@
 
 import { LitElement, html } from 'lit-element'
 import '@polymer/iron-pages/iron-pages.js'
-import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-tabs/paper-tab.js'
 import '@polymer/paper-tabs/paper-tabs.js'
 import { getBeacons, getNearestTourismPOI } from 'beacons-api'
@@ -60,6 +59,7 @@ class BeaconsMapTableComponent extends LitElement {
 
         #root {
           bottom: 0;
+          box-sizing: border-box;
           display: flex;
           flex-flow: column;
           height: 100%;
@@ -79,64 +79,105 @@ class BeaconsMapTableComponent extends LitElement {
           z-index: 2000;
         }
 
+        #header {
+          align-items: flex-end;
+          display: flex;
+          flex-shrink: 0;
+          flex-wrap: wrap;
+          gap: 8px 16px;
+          justify-content: space-between;
+          padding: 0 0 8px 0;
+        }
+
         #search {
-          float: left;
+          flex: 1 1 auto;
+          min-width: 0;
         }
 
         #tabs {
           --paper-tabs-selection-bar-color: #29A8E0;
           --paper-tab-ink: #29A8E0;
 
-          float: right;
-          margin: 2px 0 0 0;
+          flex: 0 0 auto;
+          margin: 0;
+        }
+
+        #viewport {
+          background: #ffffff;
+          border: 1px solid #cfd6dd;
+          border-radius: 8px;
+          box-sizing: border-box;
+          flex: 1;
+          min-height: 0;
+          overflow: hidden;
+          position: relative;
         }
 
         #pages {
-          flex: 1;
+          height: 100%;
+          overflow: hidden;
+          position: relative;
+          width: 100%;
+        }
+
+        #pages > * {
+          box-sizing: border-box;
+          height: 100%;
+          overflow: hidden;
+          width: 100%;
         }
 
         #map, #table {
+          box-sizing: border-box;
           height: 100%;
+          overflow: hidden;
           width: 100%;
         }
       </style>
       <div id="root">
-        <header id="header">
-          ${!!this.searchSupported?
-            html`<beacons-search id="search"></beacons-search>`:
-            html``
-          }
-          ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
-            html`
-            <paper-tabs id="tabs" selected="0">
-              <paper-tab>MAP</paper-tab>
-              <paper-tab>TABLE</paper-tab>
-            </paper-tabs>
-            `:
-            html``
-          }
-        </header>
-        <iron-pages selected="0" id="pages">
-          ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
-            html`
-            <beacons-map id="map"></beacons-map>
-            <beacons-table id="table"></beacons-table>
-            `:
-            html``
-          }
-          ${!!this.view && this.view === 'map'?
-            html`
-            <beacons-map id="map"></beacons-map>
-            `:
-            html``
-          }
-          ${!!this.view && this.view === 'table'?
-            html`
-            <beacons-table id="table"></beacons-table>
-            `:
-            html``
-          }
-        </iron-pages>
+        ${!!this.searchSupported || !this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
+          html`
+          <header id="header">
+            ${!!this.searchSupported?
+              html`<beacons-search id="search"></beacons-search>`:
+              html``
+            }
+            ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
+              html`
+              <paper-tabs id="tabs" selected="0">
+                <paper-tab>MAP</paper-tab>
+                <paper-tab>TABLE</paper-tab>
+              </paper-tabs>
+              `:
+              html``
+            }
+          </header>
+          `:
+          html``
+        }
+        <div id="viewport">
+          <iron-pages selected="0" id="pages">
+            ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
+              html`
+              <beacons-map id="map"></beacons-map>
+              <beacons-table id="table"></beacons-table>
+              `:
+              html``
+            }
+            ${!!this.view && this.view === 'map'?
+              html`
+              <beacons-map id="map"></beacons-map>
+              `:
+              html``
+            }
+            ${!!this.view && this.view === 'table'?
+              html`
+              <beacons-table id="table"></beacons-table>
+              `:
+              html``
+            }
+          </iron-pages>
+        </div>
       </div>
     `
   }
@@ -202,11 +243,18 @@ class BeaconsMapTableComponent extends LitElement {
         loadingOverlay.dismiss()
       }
 
+      const viewport = root.getElementById('viewport') || root
+      const existingDialog = viewport.querySelector('beacons-map-table-dialog')
+
+      if (existingDialog && typeof existingDialog.dismiss === 'function') {
+        existingDialog.dismiss()
+      }
+
       let dialog = document.createElement('beacons-map-table-dialog')
       dialog.beacon = beacon
       dialog.tourismPoi = tourismPoi
 
-      root.appendChild(dialog)
+      viewport.appendChild(dialog)
     } catch (error) {
       if (!!loadingOverlay) {
         loadingOverlay.dismiss()
