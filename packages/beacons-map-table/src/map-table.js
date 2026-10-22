@@ -4,7 +4,6 @@
 
 import { LitElement, html } from 'lit-element'
 import '@polymer/iron-pages/iron-pages.js'
-import '@polymer/paper-dialog/paper-dialog.js'
 import '@polymer/paper-tabs/paper-tab.js'
 import '@polymer/paper-tabs/paper-tabs.js'
 import { getBeacons, getNearestTourismPOI } from 'beacons-api'
@@ -40,10 +39,23 @@ class BeaconsMapTableComponent extends LitElement {
           --paper-font-subhead_-_font-family: "Helvetica Neue", sans-serif;
           --paper-input-container-shared-input-style_-_font-family: "Helvetica Neue", sans-serif;
 
+          box-sizing: border-box;
+          color: #1f2328;
+          container-name: beacons;
+          container-type: inline-size;
           display: block;
+          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+          height: 100%;
+          max-width: 100%;
           min-height: 480px;
           position: relative;
           width: 100%;
+        }
+
+        :host([size="wide"]),
+        :host([size="classic"]),
+        :host([size="full"]) {
+          height: 0;
         }
 
         :host([size="wide"]) {
@@ -59,11 +71,16 @@ class BeaconsMapTableComponent extends LitElement {
         }
 
         #root {
+          background: #ffffff;
+          border: 1px solid #d0d7de;
+          border-radius: 10px;
           bottom: 0;
+          box-sizing: border-box;
           display: flex;
           flex-flow: column;
           height: 100%;
           left: 0;
+          overflow: hidden;
           position: absolute;
           right: 0;
           top: 0;
@@ -79,64 +96,141 @@ class BeaconsMapTableComponent extends LitElement {
           z-index: 2000;
         }
 
+        #header {
+          align-items: flex-end;
+          background: #ffffff;
+          border-bottom: 1px solid #e6eaee;
+          box-sizing: border-box;
+          display: flex;
+          flex-shrink: 0;
+          flex-wrap: wrap;
+          gap: 4px 16px;
+          justify-content: space-between;
+          padding: 8px 12px 4px;
+          position: relative;
+          z-index: 1000;
+        }
+
         #search {
-          float: left;
+          flex: 1 1 220px;
+          max-width: 100%;
+          min-width: 0;
         }
 
         #tabs {
           --paper-tabs-selection-bar-color: #29A8E0;
           --paper-tab-ink: #29A8E0;
 
-          float: right;
-          margin: 2px 0 0 0;
+          flex: 0 0 auto;
+          margin: 0 0 0 auto;
+          max-width: 100%;
+          min-width: 0;
+        }
+
+        paper-tab {
+          color: #5c6770;
+          font-size: 13px;
+          font-weight: 600;
+          letter-spacing: 0.04em;
+        }
+
+        paper-tab.iron-selected {
+          color: #1277a8;
+        }
+
+        #viewport {
+          background: #eef2f5;
+          box-sizing: border-box;
+          flex: 1 1 auto;
+          min-height: 0;
+          min-width: 0;
+          overflow: hidden;
+          position: relative;
+        }
+
+        @container beacons (max-width: 560px) {
+          #header {
+            align-items: stretch;
+            flex-direction: column;
+            gap: 0;
+            padding: 4px 10px 0;
+          }
+
+          #search {
+            flex-basis: auto;
+          }
+
+          #tabs {
+            margin-left: 0;
+            width: 100%;
+          }
         }
 
         #pages {
-          flex: 1;
+          height: 100%;
+          overflow: hidden;
+          position: relative;
+          width: 100%;
+        }
+
+        #pages > * {
+          box-sizing: border-box;
+          height: 100%;
+          overflow: hidden;
+          width: 100%;
         }
 
         #map, #table {
+          box-sizing: border-box;
           height: 100%;
+          overflow: hidden;
           width: 100%;
         }
       </style>
       <div id="root">
-        <header id="header">
-          ${!!this.searchSupported?
-            html`<beacons-search id="search"></beacons-search>`:
-            html``
-          }
-          ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
-            html`
-            <paper-tabs id="tabs" selected="0">
-              <paper-tab>MAP</paper-tab>
-              <paper-tab>TABLE</paper-tab>
-            </paper-tabs>
-            `:
-            html``
-          }
-        </header>
-        <iron-pages selected="0" id="pages">
-          ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
-            html`
-            <beacons-map id="map"></beacons-map>
-            <beacons-table id="table"></beacons-table>
-            `:
-            html``
-          }
-          ${!!this.view && this.view === 'map'?
-            html`
-            <beacons-map id="map"></beacons-map>
-            `:
-            html``
-          }
-          ${!!this.view && this.view === 'table'?
-            html`
-            <beacons-table id="table"></beacons-table>
-            `:
-            html``
-          }
-        </iron-pages>
+        ${!!this.searchSupported || !this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
+          html`
+          <header id="header">
+            ${!!this.searchSupported?
+              html`<beacons-search id="search"></beacons-search>`:
+              html``
+            }
+            ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
+              html`
+              <paper-tabs id="tabs" selected="0">
+                <paper-tab>MAP</paper-tab>
+                <paper-tab>TABLE</paper-tab>
+              </paper-tabs>
+              `:
+              html``
+            }
+          </header>
+          `:
+          html``
+        }
+        <div id="viewport">
+          <iron-pages selected="0" id="pages">
+            ${!this.view || this.view === 'all' || (this.view !== 'map' && this.view !== 'table')?
+              html`
+              <beacons-map id="map"></beacons-map>
+              <beacons-table id="table"></beacons-table>
+              `:
+              html``
+            }
+            ${!!this.view && this.view === 'map'?
+              html`
+              <beacons-map id="map"></beacons-map>
+              `:
+              html``
+            }
+            ${!!this.view && this.view === 'table'?
+              html`
+              <beacons-table id="table"></beacons-table>
+              `:
+              html``
+            }
+          </iron-pages>
+        </div>
       </div>
     `
   }
@@ -202,11 +296,18 @@ class BeaconsMapTableComponent extends LitElement {
         loadingOverlay.dismiss()
       }
 
+      const viewport = root.getElementById('viewport') || root
+      const existingDialog = viewport.querySelector('beacons-map-table-dialog')
+
+      if (existingDialog && typeof existingDialog.dismiss === 'function') {
+        existingDialog.dismiss()
+      }
+
       let dialog = document.createElement('beacons-map-table-dialog')
       dialog.beacon = beacon
       dialog.tourismPoi = tourismPoi
 
-      root.appendChild(dialog)
+      viewport.appendChild(dialog)
     } catch (error) {
       if (!!loadingOverlay) {
         loadingOverlay.dismiss()
@@ -239,7 +340,30 @@ class BeaconsMapTableComponent extends LitElement {
         if (pages.selected !== tabs.selected) {
           pages.selected = tabs.selected
         }
+
+        if (typeof tabs.notifyResize === 'function') {
+          tabs.notifyResize()
+        }
+
+        if (!!self.map && !!self.map.map) {
+          requestAnimationFrame(() => {
+            if (!self.map._userAdjusted && typeof self.map._fit === 'function') {
+              self.map._fit(false)
+            } else {
+              self.map.map.invalidateSize()
+            }
+          })
+        }
       })
+
+      if (typeof ResizeObserver !== 'undefined') {
+        const tabsObserver = new ResizeObserver(() => {
+          if (typeof tabs.notifyResize === 'function') {
+            tabs.notifyResize()
+          }
+        })
+        tabsObserver.observe(tabs)
+      }
     }
 
     self.map = root.getElementById('map')

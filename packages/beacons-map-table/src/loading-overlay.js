@@ -20,12 +20,14 @@ class BeaconsMapTableLoadingOverlay extends LitElement {
         }
 
         #contents {
+          box-sizing: border-box;
           left: 50%;
-          max-width: 480px;
+          max-width: calc(100% - 32px);
           padding: 16px;
           position: absolute;
           top: 50%;
           transform: translate(-50%, -50%);
+          width: 480px;
         }
 
         paper-spinner-lite {
@@ -36,6 +38,8 @@ class BeaconsMapTableLoadingOverlay extends LitElement {
 
         #message {
           font-family: 'Helvetica Neue', sans-serif;
+          line-height: 1.4;
+          overflow-wrap: anywhere;
           text-align: center;
         }
       </style>
