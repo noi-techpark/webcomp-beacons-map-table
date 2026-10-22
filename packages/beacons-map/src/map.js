@@ -50,6 +50,30 @@ class BeaconsMapView extends LitElement {
           z-index: 800;
         }
 
+        #map .leaflet-top.leaflet-left {
+          margin-left: 4px;
+          margin-top: 4px;
+        }
+
+        #map .leaflet-control-zoom {
+          border: 1px solid #d0d7de;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(16, 24, 40, 0.12);
+          margin: 8px;
+          overflow: hidden;
+        }
+
+        #map .leaflet-control-zoom a {
+          height: 32px;
+          line-height: 32px;
+          width: 32px;
+        }
+
+        #map .leaflet-pane,
+        #map .leaflet-control-container {
+          max-width: 100%;
+        }
+
         #map .marker-cluster {
           background-clip: padding-box;
           background-color: #ffffff;
@@ -128,13 +152,33 @@ class BeaconsMapView extends LitElement {
       })
     }
 
-    self.map.invalidateSize()
+    self._lastBounds = bounds.isValid() ? bounds : null
+    self._fit(true)
+  }
 
-    if (bounds.isValid()) {
-      self.map.fitBounds(bounds, {
-        padding: [32, 32]
-      })
+  _fit(resetUserView) {
+    let self = this
+
+    if (resetUserView) {
+      self._userAdjusted = false
     }
+
+    if (!self.map || !self._lastBounds || !self._lastBounds.isValid()) {
+      return
+    }
+
+    const container = self.map.getContainer()
+
+    if (!container || !container.offsetWidth || !container.offsetHeight) {
+      return
+    }
+
+    self.map.invalidateSize()
+    self._fitting = true
+    self.map.fitBounds(self._lastBounds, {
+      padding: [48, 48]
+    })
+    self._fitting = false
   }
 
   async firstUpdated() {
@@ -152,11 +196,27 @@ class BeaconsMapView extends LitElement {
       showCoverageOnHover: false
     })
 
+    self._userAdjusted = false
+    self._fitting = false
+    self._lastBounds = null
+
     self.map = L.map(mapElement, {
       zoomControl: true
     }).setView([ 46.49067, 11.33982 ], 13)
 
     self.map.scrollWheelZoom.disable()
+
+    self.map.on('dragstart', () => {
+      if (!self._fitting) {
+        self._userAdjusted = true
+      }
+    })
+
+    self.map.on('zoomstart', () => {
+      if (!self._fitting) {
+        self._userAdjusted = true
+      }
+    })
 
     L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution: ''
@@ -169,6 +229,21 @@ class BeaconsMapView extends LitElement {
     })
 
     self.map.invalidateSize()
+
+    if (typeof ResizeObserver !== 'undefined') {
+      self._resizeObserver = new ResizeObserver(() => {
+        if (!mapElement.offsetWidth || !mapElement.offsetHeight) {
+          return
+        }
+
+        self.map.invalidateSize()
+
+        if (!self._userAdjusted) {
+          self._fit(false)
+        }
+      })
+      self._resizeObserver.observe(mapElement)
+    }
   }
 
 }

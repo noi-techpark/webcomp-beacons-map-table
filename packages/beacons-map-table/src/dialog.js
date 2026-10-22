@@ -30,7 +30,7 @@ class BeaconsMapTableBeaconDialog extends LitElement {
         }
 
         #backdrop {
-          background: rgba(0, 0, 0, 0.35);
+          background: rgba(16, 24, 40, 0.4);
           bottom: 0;
           left: 0;
           position: absolute;
@@ -41,8 +41,8 @@ class BeaconsMapTableBeaconDialog extends LitElement {
         #panel {
           background: #ffffff;
           border: 1px solid #d0d7de;
-          border-radius: 8px;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+          border-radius: 10px;
+          box-shadow: 0 12px 32px rgba(16, 24, 40, 0.2);
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
@@ -58,19 +58,34 @@ class BeaconsMapTableBeaconDialog extends LitElement {
 
         #header {
           align-items: center;
-          border-bottom: 1px solid #e6e8eb;
+          background: #ffffff;
+          border-bottom: 1px solid #e6eaee;
+          box-sizing: border-box;
           display: flex;
           flex-shrink: 0;
+          gap: 4px;
           justify-content: space-between;
-          padding: 4px 4px 0 8px;
+          min-width: 0;
+          padding: 0 4px 0 8px;
         }
 
         #tabs {
           --paper-tabs-selection-bar-color: #29A8E0;
           --paper-tab-ink: #29A8E0;
 
-          flex: 1;
+          flex: 1 1 auto;
           min-width: 0;
+        }
+
+        paper-tab {
+          color: #5c6770;
+          font-size: 13px;
+          font-weight: 600;
+          letter-spacing: 0.04em;
+        }
+
+        paper-tab.iron-selected {
+          color: #1277a8;
         }
 
         #close {
@@ -80,28 +95,46 @@ class BeaconsMapTableBeaconDialog extends LitElement {
 
         #pages {
           box-sizing: border-box;
-          flex: 1;
+          flex: 1 1 auto;
+          min-height: 0;
           overflow: auto;
-          padding: 8px 16px 16px;
+          padding: 4px 16px 16px;
           -webkit-overflow-scrolling: touch;
         }
 
         #beacon-tab label, #poi-tab label {
+          color: #667085;
           display: block;
           font-family: "Helvetica Neue", sans-serif;
-          font-weight: bold;
-          margin: 8px 0 0 0;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          margin: 12px 0 2px 0;
         }
 
         #beacon-tab span, #poi-tab span {
+          color: #1f2328;
           display: block;
           font-family: "Helvetica Neue", sans-serif;
+          font-size: 14px;
+          line-height: 1.4;
           overflow-wrap: anywhere;
           word-break: break-word;
         }
 
         #beacon-tab span a, #poi-tab span a {
           color: #29A8E0;
+        }
+
+        @media (max-width: 480px) {
+          #panel {
+            max-height: calc(100% - 16px);
+            max-width: calc(100% - 16px);
+          }
+
+          #pages {
+            padding: 4px 12px 12px;
+          }
         }
       </style>
       <div id="backdrop"></div>
@@ -146,13 +179,13 @@ class BeaconsMapTableBeaconDialog extends LitElement {
                 <label>ID</label>
                 <span>${this.tourismPoi.id}</span>
                 <label>TYPE</label>
-                <span>${this.tourismPoi.type || '&mdash;'}</span>
+                <span>${this.tourismPoi.type || '—'}</span>
                 <label>NAME</label>
                 <span>${this.tourismPoi.name}</span>
                 <label>MUNICIPALITY</label>
-                <span>${this.tourismPoi.municipality || '&mdash;'}</span>
+                <span>${this.tourismPoi.municipality || '—'}</span>
                 <label>DISTRICT</label>
-                <span>${this.tourismPoi.district || '&mdash;'}</span>
+                <span>${this.tourismPoi.district || '—'}</span>
                 <label>POSITION</label>
                 ${!!this.tourismPoi.latitude && !!this.tourismPoi.longitude ? html`
                   <span>${this.tourismPoi.latitude}, ${this.tourismPoi.longitude}</span>

@@ -23,40 +23,75 @@ class BeaconsSearchWidget extends LitElement {
   render() {
     return html`
       <style>
+        :host {
+          display: block;
+          min-width: 0;
+          position: relative;
+          width: 100%;
+        }
+
+        #bar {
+          align-items: flex-end;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0 12px;
+          width: 100%;
+        }
+
         #search {
+          --paper-input-container-color: #98a2b3;
+          --paper-input-container-focus-color: #29A8E0;
+          --paper-input-container-input-color: #1f2328;
           --primary-color: #29A8E0;
 
-          display: inline-block;
-          width: 280px;
+          flex: 1 1 200px;
+          max-width: 100%;
+          min-width: 0;
         }
 
         #clear {
+          color: #667085;
           visibility: hidden;
         }
 
         #radius {
           --paper-dropdown-menu-focus-color: #29A8E0;
+          --paper-input-container-color: #98a2b3;
+          --paper-input-container-focus-color: #29A8E0;
           --paper-input-container-shared-input-style_-_padding: 4px 0;
 
-          display: inline-block;
-          margin: 0 0 0 16px;
-          visibility: hidden;
-          width: 80px;
+          display: none;
+          flex: 1 1 140px;
+          max-width: 180px;
+          min-width: 120px;
+        }
+
+        #radius[data-active] {
+          display: block;
         }
 
         #suggestions {
-          --paper-item-min-height: 48px;
+          --paper-item-min-height: 40px;
 
+          background: #ffffff;
+          border-radius: 8px;
+          box-shadow: 0 8px 24px rgba(16, 24, 40, 0.16);
+          box-sizing: border-box;
           left: 0;
+          max-height: 240px;
+          max-width: 100%;
+          overflow: auto;
           position: absolute;
-          top: 50px;
-          width: 280px;
+          top: 100%;
+          width: 100%;
+          z-index: 30;
         }
       </style>
+      <div id="bar">
       <paper-input id="search" label="Search beacons" no-label-float>
-        <paper-icon-button id="clear" slot="suffix" icon="clear"></paper-icon-button>
+        <paper-icon-button id="clear" slot="suffix" icon="clear" aria-label="Clear search"></paper-icon-button>
       </paper-input>
-      <paper-dropdown-menu id="radius" label="Search radius" no-label-float>
+      <paper-dropdown-menu id="radius" label="Radius" no-label-float>
         <paper-listbox id="radius-values" slot="dropdown-content" selected="1">
           <paper-item>1 km</paper-item>
           <paper-item>2 km</paper-item>
@@ -65,6 +100,7 @@ class BeaconsSearchWidget extends LitElement {
           <paper-item>20 km</paper-item>
         </paper-listbox>
       </paper-dropdown-menu>
+      </div>
       <paper-autocomplete-suggestions id="suggestions" for="search" remote-source="true" text-property="text" value-property="value">
         <slot id="templates" name="autocomplete-custom-template"></slot>
       </paper-autocomplete-suggestions>
@@ -225,7 +261,7 @@ class BeaconsSearchWidget extends LitElement {
 
           self.search.value = lat + ', ' + lng
 
-          self.radius.style.visibility = 'visible'
+          self.radius.setAttribute('data-active', '')
 
           self.search.blur()
         }
@@ -246,7 +282,7 @@ class BeaconsSearchWidget extends LitElement {
 
       self.selectedLocation = item.value
 
-      self.radius.style.visibility = 'visible'
+      self.radius.setAttribute('data-active', '')
 
       if (!!self.onfilter) {
         self.onfilter(self.createFilter())
@@ -259,7 +295,7 @@ class BeaconsSearchWidget extends LitElement {
       self.search.readonly = false
       self.search.value = ''
 
-      self.radius.style.visibility = 'hidden'
+      self.radius.removeAttribute('data-active')
 
       clearButton.style.visibility = 'hidden'
 

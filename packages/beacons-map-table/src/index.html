@@ -11,6 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     <script type="module" src="./map-table.js"></script>
     <style>
       html, body {
+        background: #eef2f5;
         height: 100%;
         margin: 0;
         padding: 0;
@@ -18,12 +19,18 @@ SPDX-License-Identifier: AGPL-3.0-or-later
       }
       body {
         box-sizing: border-box;
-        padding: 32px;
+        padding: 16px;
       }
       #component {
         box-sizing: border-box;
         height: 100%;
+        max-width: 100%;
         width: 100%;
+      }
+      @media (max-width: 640px) {
+        body {
+          padding: 8px;
+        }
       }
     </style>
   </head>

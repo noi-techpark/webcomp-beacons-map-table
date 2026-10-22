@@ -39,10 +39,23 @@ class BeaconsMapTableComponent extends LitElement {
           --paper-font-subhead_-_font-family: "Helvetica Neue", sans-serif;
           --paper-input-container-shared-input-style_-_font-family: "Helvetica Neue", sans-serif;
 
+          box-sizing: border-box;
+          color: #1f2328;
+          container-name: beacons;
+          container-type: inline-size;
           display: block;
+          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+          height: 100%;
+          max-width: 100%;
           min-height: 480px;
           position: relative;
           width: 100%;
+        }
+
+        :host([size="wide"]),
+        :host([size="classic"]),
+        :host([size="full"]) {
+          height: 0;
         }
 
         :host([size="wide"]) {
@@ -58,12 +71,16 @@ class BeaconsMapTableComponent extends LitElement {
         }
 
         #root {
+          background: #ffffff;
+          border: 1px solid #d0d7de;
+          border-radius: 10px;
           bottom: 0;
           box-sizing: border-box;
           display: flex;
           flex-flow: column;
           height: 100%;
           left: 0;
+          overflow: hidden;
           position: absolute;
           right: 0;
           top: 0;
@@ -81,16 +98,22 @@ class BeaconsMapTableComponent extends LitElement {
 
         #header {
           align-items: flex-end;
+          background: #ffffff;
+          border-bottom: 1px solid #e6eaee;
+          box-sizing: border-box;
           display: flex;
           flex-shrink: 0;
           flex-wrap: wrap;
-          gap: 8px 16px;
+          gap: 4px 16px;
           justify-content: space-between;
-          padding: 0 0 8px 0;
+          padding: 8px 12px 4px;
+          position: relative;
+          z-index: 1000;
         }
 
         #search {
-          flex: 1 1 auto;
+          flex: 1 1 220px;
+          max-width: 100%;
           min-width: 0;
         }
 
@@ -99,18 +122,48 @@ class BeaconsMapTableComponent extends LitElement {
           --paper-tab-ink: #29A8E0;
 
           flex: 0 0 auto;
-          margin: 0;
+          margin: 0 0 0 auto;
+          max-width: 100%;
+          min-width: 0;
+        }
+
+        paper-tab {
+          color: #5c6770;
+          font-size: 13px;
+          font-weight: 600;
+          letter-spacing: 0.04em;
+        }
+
+        paper-tab.iron-selected {
+          color: #1277a8;
         }
 
         #viewport {
-          background: #ffffff;
-          border: 1px solid #cfd6dd;
-          border-radius: 8px;
+          background: #eef2f5;
           box-sizing: border-box;
-          flex: 1;
+          flex: 1 1 auto;
           min-height: 0;
+          min-width: 0;
           overflow: hidden;
           position: relative;
+        }
+
+        @container beacons (max-width: 560px) {
+          #header {
+            align-items: stretch;
+            flex-direction: column;
+            gap: 0;
+            padding: 4px 10px 0;
+          }
+
+          #search {
+            flex-basis: auto;
+          }
+
+          #tabs {
+            margin-left: 0;
+            width: 100%;
+          }
         }
 
         #pages {
@@ -287,7 +340,30 @@ class BeaconsMapTableComponent extends LitElement {
         if (pages.selected !== tabs.selected) {
           pages.selected = tabs.selected
         }
+
+        if (typeof tabs.notifyResize === 'function') {
+          tabs.notifyResize()
+        }
+
+        if (!!self.map && !!self.map.map) {
+          requestAnimationFrame(() => {
+            if (!self.map._userAdjusted && typeof self.map._fit === 'function') {
+              self.map._fit(false)
+            } else {
+              self.map.map.invalidateSize()
+            }
+          })
+        }
       })
+
+      if (typeof ResizeObserver !== 'undefined') {
+        const tabsObserver = new ResizeObserver(() => {
+          if (typeof tabs.notifyResize === 'function') {
+            tabs.notifyResize()
+          }
+        })
+        tabsObserver.observe(tabs)
+      }
     }
 
     self.map = root.getElementById('map')

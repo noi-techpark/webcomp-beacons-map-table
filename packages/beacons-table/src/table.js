@@ -23,13 +23,17 @@ class BeaconsTableView extends LitElement {
           box-sizing: border-box;
           display: block;
           height: 100%;
+          min-width: 0;
           overflow: hidden;
           width: 100%;
         }
 
         #table {
+          --material-primary-color: #29A8E0;
+          --material-primary-text-color: #1f2328;
           border: 0;
           box-sizing: border-box;
+          font-family: "Helvetica Neue", sans-serif;
           height: 100%;
           overflow: hidden;
           width: 100%;
@@ -91,9 +95,9 @@ class BeaconsTableView extends LitElement {
     self.table = root.getElementById('table')
 
     let detailsColumn = root.getElementById('detailscolumn')
-    detailsColumn.renderer = (root, grid, rowData) => {
-      root.innerHTML = '<paper-icon-button icon="launch" alt="Show the beacon\'s details"></paper-icon-button>'
-      root.querySelector('paper-icon-button').addEventListener('click', () => ((beacon) => {
+    detailsColumn.renderer = (cell, grid, rowData) => {
+      cell.innerHTML = '<paper-icon-button icon="launch" alt="Show the beacon\'s details"></paper-icon-button>'
+      cell.querySelector('paper-icon-button').addEventListener('click', () => ((beacon) => {
         if (!!self.ondetails) {
           self.ondetails(beacon)
         }
